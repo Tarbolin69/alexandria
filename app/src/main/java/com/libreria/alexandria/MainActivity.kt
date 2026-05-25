@@ -34,7 +34,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AlexandriaNavHost(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,

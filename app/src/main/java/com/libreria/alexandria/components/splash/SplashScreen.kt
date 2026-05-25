@@ -1,6 +1,7 @@
 package com.libreria.alexandria.components.splash
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,7 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    imagePainter: Painter = painterResource(R.drawable.baseline_book_24)
+    imagePainter: Painter = painterResource(R.drawable.nega_libro)
 ) {
     LaunchedEffect(Unit) {
         delay(2000L)
@@ -36,7 +37,9 @@ fun SplashScreen(
     }
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
