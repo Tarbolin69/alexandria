@@ -26,6 +26,8 @@ No formatter or linter besides `./gradlew lint` is configured.
 |---|---|
 | Entrypoint | `app/src/main/java/.../MainActivity.kt` |
 | Nav routes | `components/Screens.kt` — sealed class `Screen` (Splash, Login, BookList, BookDetail, BookReview, BookLibrary) |
+| Screens | `components/splash/`, `components/listado/`, `components/detalle/` — each has a `Pantalla` + `ViewModel` |
+| Data layer | `data/` — OpenLibrary API via Retrofit, repository pattern |
 | Theme | `ui/theme/Theme.kt` — Material 3 with dynamic colors |
 | Version catalog | `gradle/libs.versions.toml` (all dependencies and plugins live here) |
 
@@ -33,7 +35,7 @@ Single activity, single module (`:app`), package `com.libreria.alexandria`.
 
 ## Gotchas
 
+- **Spanish naming** — all UI components use Spanish names (`Pantalla`, `Listado`, `Detalle`). Stick to the convention.
 - **ViewBinding enabled** alongside Compose (`buildFeatures.viewBinding = true`).
-- **`SplashScreen.kt`** currently breaks the `@Composable` contract: missing annotation, parameter name typo (`modifider`).
 - Version catalog has stale version keys (*e.g.* `composeBom` pinned at `2024.09.00` in `[versions]` but the library alias resolves `2026.05.01`).
-- No CI/CD configured. Active branch: `SplashScreen` (not yet ahead of `main`).
+- No CI/CD configured.
