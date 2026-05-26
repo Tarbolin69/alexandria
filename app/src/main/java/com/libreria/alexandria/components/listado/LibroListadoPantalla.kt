@@ -13,21 +13,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -39,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,12 +57,17 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
+private val generos = listOf(
+    "Romance", "Fantasy", "Sci-fi", "Mystery", "Adventure",
+    "History", "Poetry", "Biography", "Horror", "Drama",
+)
+
 @Composable
 fun LibroListadoPantalla(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val factory = remember {
+    val fabrica = remember {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
@@ -73,27 +80,28 @@ fun LibroListadoPantalla(
                     .build()
                 val api = retrofit.create(OpenLibraryAPI::class.java)
                 val dataSource = LibroRemoteDataSource(api)
-                val repository = LibroRepositorio(dataSource)
-                return BooksViewModel(repository) as T
+                val repositorio = LibroRepositorio(dataSource)
+                return LibrosViewModel(repositorio) as T
             }
         }
     }
-    val viewModel: BooksViewModel = viewModel(factory = factory)
+    val viewModel: LibrosViewModel = viewModel(factory = fabrica)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val generoElegido by viewModel.selectedSubject.collectAsStateWithLifecycle()
     var query by rememberSaveable { mutableStateOf("") }
-    val listState = rememberLazyListState()
+    val listaEstado = rememberLazyListState()
 
-    val shouldLoadMore by remember {
+    val cargarMas by remember {
         derivedStateOf {
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null &&
-                lastVisibleItem.index >= listState.layoutInfo.totalItemsCount - 2
+            val ultimoLibroGenerado = listaEstado.layoutInfo.visibleItemsInfo.lastOrNull()
+            ultimoLibroGenerado != null &&
+                ultimoLibroGenerado.index >= listaEstado.layoutInfo.totalItemsCount - 2
         }
     }
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore && query.isNotBlank()) {
-            viewModel.cargarSiguientePagina(query)
+    LaunchedEffect(cargarMas) {
+        if (cargarMas) {
+            viewModel.cargarSiguientePagina()
         }
     }
 
@@ -117,8 +125,25 @@ fun LibroListadoPantalla(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        when (val state = uiState) {
-            is BooksViewModel.LibroEstadoUI.Cargando -> {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(generos, key = { it }) { genero ->
+                FilterChip(
+                    selected = genero == generoElegido,
+                    onClick = {
+                        query = ""
+                        viewModel.buscarPorGenero(genero)
+                    },
+                    label = { Text(genero) }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        when (val estado = uiState) {
+            is LibrosViewModel.LibroEstadoUI.Cargando -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -126,20 +151,20 @@ fun LibroListadoPantalla(
                     CircularProgressIndicator()
                 }
             }
-            is BooksViewModel.LibroEstadoUI.Error -> {
+            is LibrosViewModel.LibroEstadoUI.Error -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = state.message,
+                        text = estado.message,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
-            is BooksViewModel.LibroEstadoUI.Completado -> {
-                if (state.books.isEmpty()) {
+            is LibrosViewModel.LibroEstadoUI.Completado -> {
+                if (estado.books.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -151,12 +176,12 @@ fun LibroListadoPantalla(
                     }
                 } else {
                     LazyColumn(
-                        state = listState,
+                        state = listaEstado,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(state.books, key = { it.id }) { book ->
-                            BookListaItem(
-                                book = book,
+                        items(estado.books, key = { it.id }) { libro ->
+                            LibroListadoItem(
+                                libro = libro,
                                 onClick = {
                                     navController.navigate(Screen.BookDetail.route)
                                 }
@@ -170,8 +195,8 @@ fun LibroListadoPantalla(
 }
 
 @Composable
-private fun BookListaItem(
-    book: Libro,
+private fun LibroListadoItem(
+    libro: Libro,
     onClick: () -> Unit
 ) {
     Card(
@@ -187,8 +212,8 @@ private fun BookListaItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = book.cubiertaId,
-                contentDescription = book.titulo,
+                model = libro.cubiertaId,
+                contentDescription = libro.titulo,
                 modifier = Modifier.size(64.dp, 96.dp),
                 contentScale = ContentScale.Crop
             )
@@ -197,19 +222,19 @@ private fun BookListaItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = book.titulo,
+                    text = libro.titulo,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = book.autor,
+                    text = libro.autor,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = book.pubFecha,
+                    text = libro.pubFecha,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
