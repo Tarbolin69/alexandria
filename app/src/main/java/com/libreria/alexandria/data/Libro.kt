@@ -6,5 +6,4 @@ data class Libro(
     val autor: String,
     val pubFecha: String,
     val cubiertaId: String,
-    val generos: List<String>,
 )
