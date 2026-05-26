@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class GeneroResult(
+data class GeneroRespuesta(
     @Json(name = "works") val obras: List<ObraDto>
 )
 

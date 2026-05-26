@@ -54,9 +54,16 @@ import com.libreria.alexandria.data.Libro
 import com.libreria.alexandria.data.LibroRemoteDataSource
 import com.libreria.alexandria.data.LibroRepositorio
 
-private val generos = listOf(
-    "Romance", "Fantasy", "Sci-fi", "Mystery", "Adventure",
-    "History", "Poetry", "Biography", "Horror", "Drama",
+private val generos = mapOf(
+    "Fantasia" to "Fantasy",
+    "Ciencia ficción" to "Sci-fi",
+    "Misterio" to "Mystery",
+    "Aventura" to "Adventure",
+    "Historia" to "History",
+    "Poesía" to "Poetry",
+    "Biografía" to "Biography",
+    "Terror" to "Horror",
+    "Dramas" to "Drama"
 )
 
 @Composable
@@ -117,12 +124,12 @@ fun LibroListadoPantalla(
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(generos, key = { it }) { genero ->
+            items(generos.keys.toList(), key = { it }) { genero ->
                 FilterChip(
-                    selected = genero == generoElegido,
+                    selected = generos[genero] == generoElegido,
                     onClick = {
                         query = ""
-                        viewModel.buscarPorGenero(genero)
+                        viewModel.buscarPorGenero(generos[genero] ?: genero)
                     },
                     label = { Text(genero) }
                 )
