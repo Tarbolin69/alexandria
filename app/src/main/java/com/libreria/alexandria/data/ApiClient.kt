@@ -10,11 +10,9 @@ object ApiClient {
         .add(DescripcionAdapter())
         .addLast(KotlinJsonAdapterFactory())
         .build()
-
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://openlibrary.org/")
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
-
     val api: OpenLibraryAPI = retrofit.create(OpenLibraryAPI::class.java)
 }

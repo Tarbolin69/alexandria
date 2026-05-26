@@ -17,7 +17,7 @@ interface OpenLibraryAPI {
         @Path("subject") subject: String,
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0,
-    ): GeneroResult
+    ): GeneroRespuesta
 
     @GET("works/{id}.json")
     suspend fun obtenerObra(

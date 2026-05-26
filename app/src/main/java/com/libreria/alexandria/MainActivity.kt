@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -47,23 +46,14 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
         composable(Screen.BookList.route) {
             LibroListadoPantalla(navController = navController)
         }
-
         composable(Screen.BookDetail.ROUTE_PATTERN) { backStackEntry ->
-            val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
+            val libroId = backStackEntry.arguments?.getString("bookId") ?: ""
             val autor = backStackEntry.arguments?.getString("autor") ?: ""
             LibroDetallePantalla(
                         navController = navController,
-                        libroId = bookId,
+                        libroId = libroId,
                         autor = autor,
-                    )
+                )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AlexandriaNavHostPreview() {
-    AlexandriaTheme {
-        AlexandriaNavHost()
     }
 }
