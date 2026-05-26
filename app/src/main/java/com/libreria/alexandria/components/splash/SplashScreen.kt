@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    imagePainter: Painter = painterResource(R.drawable.nega_libro)
+    imagenVector: Painter = painterResource(R.drawable.nega_libro)
 ) {
     LaunchedEffect(Unit) {
         delay(2000L)
@@ -47,7 +47,7 @@ fun SplashScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = imagePainter,
+                painter = imagenVector,
                 contentDescription = null,
                 modifier = Modifier.size(160.dp)
             )
