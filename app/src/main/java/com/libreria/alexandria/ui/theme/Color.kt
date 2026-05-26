@@ -2,6 +2,9 @@ package com.libreria.alexandria.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+// Use Figma para crear una lista de todos los colores usados
+// en el tema "Yellow-DT" con pequeñas modificaciones.
+
 val YellowPrimary = Color(0xFFFFD54F)
 val YellowOnPrimary = Color(0xFF1A1A00)
 val YellowPrimaryContainer = Color(0xFF3E3800)

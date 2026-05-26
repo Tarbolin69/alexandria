@@ -54,6 +54,10 @@ import com.libreria.alexandria.data.Libro
 import com.libreria.alexandria.data.LibroRemoteDataSource
 import com.libreria.alexandria.data.LibroRepositorio
 
+// Open Library solamente tiene etiquetas en Inglés.
+// Inicialmente, solo las usé en inglés, pero estaba
+// medio raro con el texto en español del resto del
+// app. Un simple mapOf arregló esto.
 private val generos = mapOf(
     "Fantasia" to "Fantasy",
     "Ciencia ficción" to "Sci-fi",
@@ -64,13 +68,21 @@ private val generos = mapOf(
     "Biografía" to "Biography",
     "Terror" to "Horror",
     "Dramas" to "Drama"
+    // Técnicamente, podría añadir una cantidad
+    // infinita de generos, ya que Open Library
+    // hay un million de los mismos para cada
+    // libro que existe.
 )
 
+// La UI en si de la pantalla, con la barra de
+// búsqueda, las etiquetas y el LazyColumn.
 @Composable
 fun LibroListadoPantalla(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    // Dependencias para que el resto de las funciones
+    // anden bien.
     val fabrica = remember {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -88,6 +100,8 @@ fun LibroListadoPantalla(
     var query by rememberSaveable { mutableStateOf("") }
     val listaEstado = rememberLazyListState()
 
+    // Carga más libros cuando se está llegando al
+    // final de la última página cargada.
     val cargarMas by remember {
         derivedStateOf {
             val ultimoLibroGenerado = listaEstado.layoutInfo.visibleItemsInfo.lastOrNull()

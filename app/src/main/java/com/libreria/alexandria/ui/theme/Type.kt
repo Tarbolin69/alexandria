@@ -7,6 +7,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.libreria.alexandria.R
 
+// Mi fuente tipografica favorita (y gratis) :)
+// https://github.com/protesilaos/aporetic
 object AppFont {
     val Aporetic = FontFamily(
         Font(R.font.aporetic_sans_regular, FontWeight.Normal),
@@ -16,6 +18,9 @@ object AppFont {
     )
 }
 
+// Se estandariza el uso de las fuente tipografica en la app
+// usando valores reusables para Text. Siguiendo las guias de
+// android para Jetpack Compose Fonts.
 private val defaultTypography = Typography()
 val Typography = Typography(
     displayLarge = defaultTypography.displayLarge.copy(fontFamily = AppFont.Aporetic),
