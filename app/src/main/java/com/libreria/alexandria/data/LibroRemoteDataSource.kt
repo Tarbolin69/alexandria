@@ -7,11 +7,26 @@ class LibroRemoteDataSource(private val api: OpenLibraryAPI) {
             Libro(
                 id = dto.llave.removePrefix("/works/"),
                 titulo = dto.titulo,
-                autor = dto.autor.firstOrNull() ?: "Sin autor",
+                autor = dto.autor?.firstOrNull() ?: "Sin autor",
                 cubiertaId = if (dto.portada != null) {
                     "https://covers.openlibrary.org/b/id/${dto.portada}-M.jpg"
                 } else "",
                 pubFecha = dto.pubFecha?.toString() ?: "N/A"
+            )
+        }
+    }
+
+    suspend fun buscarPorGenero(subject: String, offset: Int, limit: Int): List<Libro> {
+        val respuesta = api.buscarPorGenero(subject, limit, offset)
+        return respuesta.obras.map { obra ->
+            Libro(
+                id = obra.llave.removePrefix("/works/"),
+                titulo = obra.titulo,
+                autor = obra.autores?.firstOrNull()?.nombre ?: "Sin autor",
+                cubiertaId = if (obra.portadaId != null) {
+                    "https://covers.openlibrary.org/b/id/${obra.portadaId}-M.jpg"
+                } else "",
+                pubFecha = obra.pubFecha?.toString() ?: "N/A"
             )
         }
     }

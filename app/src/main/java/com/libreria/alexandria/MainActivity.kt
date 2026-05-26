@@ -14,7 +14,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.libreria.alexandria.components.Screen
-import com.libreria.alexandria.components.splash.SplashScreen
+import com.libreria.alexandria.components.listado.LibroListadoPantalla
+import com.libreria.alexandria.components.splash.SplashPantalla
 import com.libreria.alexandria.ui.theme.AlexandriaTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,9 +41,13 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize()
     ) {
         composable(Screen.Splash.route) {
-            SplashScreen(navController = navController)
+            SplashPantalla(navController = navController)
         }
-        composable(Screen.Login.route) {
+        composable(Screen.BookList.route) {
+            LibroListadoPantalla(navController = navController)
+        }
+
+        composable(Screen.BookDetail.route) {
 
         }
     }

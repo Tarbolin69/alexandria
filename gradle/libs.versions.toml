@@ -34,6 +34,7 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 androidx-material3 = { module = "androidx.compose.material3:material3" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
+androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 androidx-ui = { module = "androidx.compose.ui:ui" }
 androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
