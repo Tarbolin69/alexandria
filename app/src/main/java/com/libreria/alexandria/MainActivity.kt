@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.libreria.alexandria.components.Screen
+import com.libreria.alexandria.components.detalle.LibroDetallePantalla
 import com.libreria.alexandria.components.listado.LibroListadoPantalla
 import com.libreria.alexandria.components.splash.SplashPantalla
 import com.libreria.alexandria.ui.theme.AlexandriaTheme
@@ -47,8 +48,14 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
             LibroListadoPantalla(navController = navController)
         }
 
-        composable(Screen.BookDetail.route) {
-
+        composable(Screen.BookDetail.ROUTE_PATTERN) { backStackEntry ->
+            val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
+            val autor = backStackEntry.arguments?.getString("autor") ?: ""
+            LibroDetallePantalla(
+                        navController = navController,
+                        libroId = bookId,
+                        autor = autor,
+                    )
         }
     }
 }

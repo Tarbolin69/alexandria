@@ -48,14 +48,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.libreria.alexandria.components.Screen
+import com.libreria.alexandria.data.ApiClient
 import com.libreria.alexandria.data.Libro
 import com.libreria.alexandria.data.LibroRemoteDataSource
 import com.libreria.alexandria.data.LibroRepositorio
-import com.libreria.alexandria.data.OpenLibraryAPI
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 private val generos = listOf(
     "Romance", "Fantasy", "Sci-fi", "Mystery", "Adventure",
@@ -71,15 +67,7 @@ fun LibroListadoPantalla(
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                val moshi = Moshi.Builder()
-                    .addLast(KotlinJsonAdapterFactory())
-                    .build()
-                val retrofit = Retrofit.Builder()
-                    .baseUrl("https://openlibrary.org/")
-                    .addConverterFactory(MoshiConverterFactory.create(moshi))
-                    .build()
-                val api = retrofit.create(OpenLibraryAPI::class.java)
-                val dataSource = LibroRemoteDataSource(api)
+                val dataSource = LibroRemoteDataSource(ApiClient.api)
                 val repositorio = LibroRepositorio(dataSource)
                 return LibrosViewModel(repositorio) as T
             }
@@ -183,7 +171,9 @@ fun LibroListadoPantalla(
                             LibroListadoItem(
                                 libro = libro,
                                 onClick = {
-                                    navController.navigate(Screen.BookDetail.route)
+                                    navController.navigate(
+                                        Screen.BookDetail.createRoute(libro.id, libro.autor)
+                                    )
                                 }
                             )
                         }
