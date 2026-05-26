@@ -18,4 +18,9 @@ interface OpenLibraryAPI {
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0,
     ): GeneroResult
+
+    @GET("works/{id}.json")
+    suspend fun obtenerObra(
+        @Path("id") id: String,
+    ): ObraRespuesta
 }

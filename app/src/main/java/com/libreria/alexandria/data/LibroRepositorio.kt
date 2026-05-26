@@ -18,4 +18,13 @@ class LibroRepositorio(private val remoteDataSource: LibroRemoteDataSource) {
             Result.failure(e)
         }
     }
+
+    suspend fun obtenerInfoDetalle(libroId: String, autor: String): Result<LibroDetalleInfo> {
+        return try {
+            val info = remoteDataSource.obtenerInfoDetalle(libroId, autor)
+            Result.success(info)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
