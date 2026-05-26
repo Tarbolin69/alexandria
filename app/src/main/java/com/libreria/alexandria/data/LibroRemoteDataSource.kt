@@ -7,7 +7,7 @@ class LibroRemoteDataSource(private val api: OpenLibraryAPI) {
             Libro(
                 id = dto.llave.removePrefix("/works/"),
                 titulo = dto.titulo,
-                autor = dto.autor.firstOrNull() ?: "Sin autor",
+                autor = dto.autor?.firstOrNull() ?: "Sin autor",
                 cubiertaId = if (dto.portada != null) {
                     "https://covers.openlibrary.org/b/id/${dto.portada}-M.jpg"
                 } else "",

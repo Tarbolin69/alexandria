@@ -24,14 +24,14 @@ import com.libreria.alexandria.components.Screen
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(
+fun SplashPantalla(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     imagenVector: Painter = painterResource(R.drawable.nega_libro)
 ) {
     LaunchedEffect(Unit) {
         delay(2000L)
-        navController.navigate(Screen.Login.route) {
+        navController.navigate(Screen.BookList.route) {
             popUpTo(Screen.Splash.route) { inclusive = true }
         }
     }
