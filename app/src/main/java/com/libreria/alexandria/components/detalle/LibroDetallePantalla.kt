@@ -40,12 +40,20 @@ import com.libreria.alexandria.data.ApiClient
 import com.libreria.alexandria.data.LibroRemoteDataSource
 import com.libreria.alexandria.data.LibroRepositorio
 
+// Clase temporaria para mostrar como se veria la
+// funcionalidad de reseñas en la version final.
+//
+// TODO: Remover clase cuando se creen las DBs.
 private data class ResenaPlaceholder(
     val usuario: String,
     val texto: String,
     val puntuacion: Int,
 )
 
+// Todavía no implemente usuarios y la base de datos
+// de reseñas. Eso para la próxima entrega.
+//
+// TODO: Remover la lista temporaria.
 private val resenasPlaceholder = listOf(
     ResenaPlaceholder("usuario01", "Una obra fascinante que atrapa desde la primera página.", 5),
     ResenaPlaceholder("lector_avido", "Buen libro, aunque el ritmo decae en la mitad.", 4),
@@ -53,6 +61,9 @@ private val resenasPlaceholder = listOf(
     ResenaPlaceholder("lector_critico", "Esperaba más del desenlace, pero en general es entretenido.", 3),
 )
 
+// La pantalla de detalles en sí. Los parámetros
+// "libroId" y "autor" son los recibimos desde
+// la página de listado de libros.
 @Composable
 fun LibroDetallePantalla(
     navController: NavHostController,
@@ -60,6 +71,7 @@ fun LibroDetallePantalla(
     autor: String,
     modifier: Modifier = Modifier,
 ) {
+    // Los mismo que en LibroListadoPantalla.kt
     val factory = remember(libroId, autor) {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -187,6 +199,11 @@ fun LibroDetallePantalla(
     }
 }
 
+// Renderiza las reseñas como "cartas" abajo del libro
+// y su descripcion. Nada muy complicado, aunque esta
+// usando los placeholders.
+//
+// TODO: Adaptar para DB de Reseñas.
 @Composable
 private fun ResenaItem(resena: ResenaPlaceholder) {
     Card(

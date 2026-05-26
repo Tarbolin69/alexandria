@@ -1,5 +1,12 @@
 package com.libreria.alexandria.components.splash
 
+// Intente buscar por todos lados, pero no pude
+// encontrar manera alguna de remover el SplashScreen
+// nativo de Android Studio (el que tiene el logo de
+// android en fondo blanco). La única solución que vi
+// es "esconderlo", pero eso no remueve el tiempo que
+// este usa para ser renderizado.
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +34,9 @@ import kotlinx.coroutines.delay
 fun SplashPantalla(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    // Tuve que usar Adobe aca porque a Android no le
+    // gusta como cierto software hace SVG y rompe el
+    // programa cuando los intentas renderizar.
     imagenVector: Painter = painterResource(R.drawable.nega_libro)
 ) {
     LaunchedEffect(Unit) {

@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 
+// Nombres estandarizados para todos los colores usados en la app.
 private val YellowDarkColorScheme = darkColorScheme(
     primary = YellowPrimary,
     onPrimary = YellowOnPrimary,
@@ -26,6 +27,9 @@ private val YellowDarkColorScheme = darkColorScheme(
     onError = OnError
 )
 
+// Un "wrapper" para el tema que usa la app. Envuelve el contenido
+// de la app entera en MainActivity.kt para no tener que llamarlo
+// constantemente en todos los elementos. Incluye colores y fuentes.
 @Composable
 fun AlexandriaTheme(
     content: @Composable () -> Unit
