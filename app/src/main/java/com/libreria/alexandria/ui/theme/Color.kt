@@ -15,7 +15,7 @@ val YellowOnSecondaryContainer = Color(0xFFFFF9C4)
 val YellowTertiary = Color(0xFFFFB74D)
 val YellowOnTertiary = Color(0xFF1C1B00)
 
-val YellowBackground = Color(0xFF111111)
+val YellowBackground = Color(0xFF17130B)
 val YellowOnBackground = Color(0xFFE0E0E0)
 
 val YellowSurface = Color(0xFF1A1A1A)
