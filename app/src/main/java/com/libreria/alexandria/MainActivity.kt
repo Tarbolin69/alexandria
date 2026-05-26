@@ -47,11 +47,11 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
             LibroListadoPantalla(navController = navController)
         }
         composable(Screen.BookDetail.ROUTE_PATTERN) { backStackEntry ->
-            val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
+            val libroId = backStackEntry.arguments?.getString("bookId") ?: ""
             val autor = backStackEntry.arguments?.getString("autor") ?: ""
             LibroDetallePantalla(
                         navController = navController,
-                        libroId = bookId,
+                        libroId = libroId,
                         autor = autor,
                 )
         }

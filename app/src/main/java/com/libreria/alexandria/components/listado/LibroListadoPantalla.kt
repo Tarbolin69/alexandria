@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
@@ -213,6 +214,7 @@ private fun LibroListadoItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = libro.titulo,
+                    fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2
                 )
