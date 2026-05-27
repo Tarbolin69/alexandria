@@ -43,6 +43,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
+import com.libreria.alexandria.R
 import com.libreria.alexandria.data.Libro
 
 // Subject API de Open Library usa generos en inglés, y al
@@ -227,7 +229,9 @@ private fun LibroListadoItem(
                 model = libro.cubiertaId,
                 contentDescription = libro.titulo,
                 modifier = Modifier.size(64.dp, 96.dp),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                loading = placeholder(R.drawable.baseline_book_24),
+                failure = placeholder(R.drawable.baseline_book_24)
             )
 
             Spacer(modifier = Modifier.width(12.dp))

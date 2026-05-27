@@ -31,6 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
+import com.libreria.alexandria.R
 
 // Una clase temporaria para mostrar la funcionalidad
 // de reseñas de usuario en la pantalla de detalles.
@@ -97,6 +99,8 @@ fun LibroDetallePantalla(
                                 contentDescription = estado.titulo,
                                 modifier = Modifier.size(120.dp, 180.dp),
                                 contentScale = ContentScale.Crop,
+                                loading = placeholder(R.drawable.baseline_book_24),
+                                failure = placeholder(R.drawable.baseline_book_24)
                             )
 
                             Spacer(modifier = Modifier.width(16.dp))
