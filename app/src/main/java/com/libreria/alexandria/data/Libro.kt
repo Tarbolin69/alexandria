@@ -1,6 +1,6 @@
 package com.libreria.alexandria.data
 
-// Clase basica de un libro, con todos los datos
+// Clase básica de un libro, con todos los datos
 // obtenidos mediante la Search API de Open Library.
 data class Libro(
     val id: String,

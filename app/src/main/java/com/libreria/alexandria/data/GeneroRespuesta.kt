@@ -1,6 +1,6 @@
 package com.libreria.alexandria.data
 
-// Basicamente lo mismo que LibroRespuesta.kt,
+// Básicamente, lo mismo que LibroRespuesta.kt,
 // pero con unos cambios menores debido a que
 // Subjects API devuelve una lista de libros
 // con diferentes valores que Search API.

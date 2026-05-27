@@ -24,165 +24,135 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.libreria.alexandria.data.ApiClient
-import com.libreria.alexandria.data.LibroRemoteDataSource
-import com.libreria.alexandria.data.LibroRepositorio
 
-// Clase temporaria para mostrar como se veria la
-// funcionalidad de reseñas en la version final.
-//
-// TODO: Remover clase cuando se creen las DBs.
 private data class ResenaPlaceholder(
     val usuario: String,
     val texto: String,
     val puntuacion: Int,
 )
 
-// Todavía no implemente usuarios y la base de datos
-// de reseñas. Eso para la próxima entrega.
-//
-// TODO: Remover la lista temporaria.
 private val resenasPlaceholder = listOf(
     ResenaPlaceholder("usuario01", "Una obra fascinante que atrapa desde la primera página.", 5),
-    ResenaPlaceholder("lector_avido", "Buen libro, aunque el ritmo decae en la mitad.", 4),
-    ResenaPlaceholder("booklover99", "Lo recomiendo ampliamente, muy bien escrito.", 5),
+    ResenaPlaceholder("lector_ávido", "Buen libro, aunque el ritmo decae en la mitad.", 4),
+    ResenaPlaceholder("librero99", "Lo recomiendo ampliamente, muy bien escrito.", 5),
     ResenaPlaceholder("lector_critico", "Esperaba más del desenlace, pero en general es entretenido.", 3),
 )
 
-// La pantalla de detalles en sí. Los parámetros
-// "libroId" y "autor" son los recibimos desde
-// la página de listado de libros.
 @Composable
 fun LibroDetallePantalla(
-    navController: NavHostController,
-    libroId: String,
-    autor: String,
+    estado: LibroDetalleUiState,
+    onRegresar: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Los mismo que en LibroListadoPantalla.kt
-    val factory = remember(libroId, autor) {
-        object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                val dataSource = LibroRemoteDataSource(ApiClient.api)
-                val repositorio = LibroRepositorio(dataSource)
-                return LibroDetalleViewModel(repositorio, libroId, autor) as T
-            }
-        }
-    }
-    val viewModel: LibroDetalleViewModel = viewModel(factory = factory)
-    val estado by viewModel.uiState.collectAsStateWithLifecycle()
-
     Box(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 48.dp)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Top,
+        when (estado) {
+            is LibroDetalleUiState.Cargando -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    AsyncImage(
-                        model = estado.cubiertaUrl,
-                        contentDescription = estado.titulo,
-                        modifier = Modifier.size(120.dp, 180.dp),
-                        contentScale = ContentScale.Crop,
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = estado.titulo,
-                            style = MaterialTheme.typography.headlineSmall,
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = estado.autor,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = estado.pubFecha,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                    CircularProgressIndicator()
                 }
             }
-
-            item {
-                Column(modifier = Modifier.fillMaxWidth()) {
+            is LibroDetalleUiState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
-                        text = "Descripción",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
+                        text = estado.mensaje,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyLarge
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    when {
-                        estado.isLoading -> {
-                            Box(
-                                modifier = Modifier.fillMaxWidth().height(80.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                CircularProgressIndicator()
+                }
+            }
+            is LibroDetalleUiState.Completado -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 48.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.Top,
+                        ) {
+                            AsyncImage(
+                                model = estado.cubiertaUrl,
+                                contentDescription = estado.titulo,
+                                modifier = Modifier.size(120.dp, 180.dp),
+                                contentScale = ContentScale.Crop,
+                            )
+
+                            Spacer(modifier = Modifier.width(16.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = estado.titulo,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = estado.autor,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = estado.pubFecha,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
                             }
                         }
-                        estado.error != null -> {
+                    }
+
+                    item {
+                        Column(modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                text = estado.error!!,
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodyMedium,
+                                text = "Descripción",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
                             )
-                        }
-                        else -> {
+                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = estado.descripcion,
                                 style = MaterialTheme.typography.bodyLarge,
                             )
                         }
                     }
+
+                    item {
+                        HorizontalDivider()
+                    }
+
+                    item {
+                        Text(
+                            text = "Reseñas de usuarios",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                    }
+
+                    items(resenasPlaceholder, key = { it.usuario }) { resena ->
+                        ResenaItem(resena)
+                    }
                 }
-            }
-
-            item {
-                HorizontalDivider()
-            }
-
-            item {
-                Text(
-                    text = "Reseñas de usuarios",
-                    style = MaterialTheme.typography.titleLarge,
-                )
-            }
-
-            items(resenasPlaceholder, key = { it.usuario }) { resena ->
-                ResenaItem(resena)
             }
         }
 
         Row(
             modifier = Modifier
-                .clickable { navController.popBackStack() }
+                .clickable(onClick = onRegresar)
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -199,11 +169,6 @@ fun LibroDetallePantalla(
     }
 }
 
-// Renderiza las reseñas como "cartas" abajo del libro
-// y su descripcion. Nada muy complicado, aunque esta
-// usando los placeholders.
-//
-// TODO: Adaptar para DB de Reseñas.
 @Composable
 private fun ResenaItem(resena: ResenaPlaceholder) {
     Card(

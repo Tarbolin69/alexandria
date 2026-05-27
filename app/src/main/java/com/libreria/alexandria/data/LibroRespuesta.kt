@@ -3,21 +3,21 @@ package com.libreria.alexandria.data
 // El "Data Transfer Object" para la Search API
 // de Open Library. Contiene tanto la lista de
 // "docs" (libros) que se obtiene por la API,
-// y el contenido en si de los "docs" (libros).
+// y el contenido en sí de los "docs" (libros).
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-// Manega todos los "docs" que devuelve la API
+// Maneja todos los "docs" que devuelve la API
 // y los convierte en una lista de libros.
 @JsonClass(generateAdapter = true)
 data class LibroRespuesta(
      @Json(name = "docs") val libros: List<LibroDto>
 )
 
-// Maneja un solo "doc" que devuelve la API, y
+// Maneja uno de los "docs" que devuelve la API, y
 // lo convierte en un libro con todos los datos
-// proveidos por la misma.
+// proveídos por la misma.
 @JsonClass(generateAdapter = true)
 data class LibroDto(
      @Json(name = "title") val titulo: String,

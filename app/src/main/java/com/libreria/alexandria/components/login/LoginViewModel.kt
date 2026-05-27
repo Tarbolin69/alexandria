@@ -1,18 +1,13 @@
 package com.libreria.alexandria.components.login
 
-// Viewmodel de Login y Signup con Google usando Firebase Auth
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
-import kotlinx.coroutines.Dispatchers
+import com.libreria.alexandria.data.AuthRepositorio
+import com.libreria.alexandria.data.ServiceLocator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 sealed interface LoginEstadoUI {
     data object Inicial : LoginEstadoUI
@@ -21,9 +16,9 @@ sealed interface LoginEstadoUI {
     data object Autenticado : LoginEstadoUI
 }
 
-class LoginViewModel : ViewModel() {
-    private val auth = FirebaseAuth.getInstance()
-
+class LoginViewModel(
+    private val authRepositorio: AuthRepositorio = ServiceLocator.authRepositorio
+) : ViewModel() {
     private val _uiState = MutableStateFlow<LoginEstadoUI>(LoginEstadoUI.Inicial)
     val uiState: StateFlow<LoginEstadoUI> = _uiState.asStateFlow()
 
@@ -34,17 +29,13 @@ class LoginViewModel : ViewModel() {
     fun autenticarConGoogle(idToken: String) {
         viewModelScope.launch {
             _uiState.value = LoginEstadoUI.Cargando
-            try {
-                val credencial = GoogleAuthProvider.getCredential(idToken, null)
-                withContext(Dispatchers.IO) {
-                    Tasks.await(auth.signInWithCredential(credencial))
+            authRepositorio.iniciarSesionConGoogle(idToken)
+                .onSuccess { _uiState.value = LoginEstadoUI.Autenticado }
+                .onFailure { e ->
+                    _uiState.value = LoginEstadoUI.Error(
+                        e.message ?: "Error al iniciar sesión con Google"
+                    )
                 }
-                _uiState.value = LoginEstadoUI.Autenticado
-            } catch (e: Exception) {
-                _uiState.value = LoginEstadoUI.Error(
-                    e.message ?: "Error al iniciar sesión con Google"
-                )
-            }
         }
     }
 }
