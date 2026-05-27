@@ -41,7 +41,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.libreria.alexandria.data.Libro
 
 // Subject API de Open Library usa generos en inglés, y al
@@ -65,6 +66,7 @@ private val generos = mapOf(
 )
 
 @Composable
+@OptIn(ExperimentalGlideComposeApi::class)
 fun LibroListadoPantalla(
     uiState: LibroEstadoUI,
     generoElegido: String?,
@@ -192,6 +194,7 @@ fun LibroListadoPantalla(
 }
 
 @Composable
+@OptIn(ExperimentalGlideComposeApi::class)
 private fun LibroListadoItem(
     libro: Libro,
     onClick: () -> Unit
@@ -208,7 +211,7 @@ private fun LibroListadoItem(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
+            GlideImage(
                 model = libro.cubiertaId,
                 contentDescription = libro.titulo,
                 modifier = Modifier.size(64.dp, 96.dp),

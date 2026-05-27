@@ -29,7 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 
 // Una clase temporaria para mostrar la funcionalidad
 // de reseñas de usuario en la pantalla de detalles.
@@ -49,6 +50,7 @@ private val resenasPlaceholder = listOf(
 )
 
 @Composable
+@OptIn(ExperimentalGlideComposeApi::class)
 fun LibroDetallePantalla(
     estado: LibroDetalleUiState,
     onRegresar: () -> Unit,
@@ -90,7 +92,7 @@ fun LibroDetallePantalla(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.Top,
                         ) {
-                            AsyncImage(
+                            GlideImage(
                                 model = estado.cubiertaUrl,
                                 contentDescription = estado.titulo,
                                 modifier = Modifier.size(120.dp, 180.dp),
