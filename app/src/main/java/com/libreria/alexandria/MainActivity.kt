@@ -15,7 +15,6 @@ import androidx.navigation.compose.rememberNavController
 import com.libreria.alexandria.components.Screen
 import com.libreria.alexandria.components.detalle.LibroDetallePantalla
 import com.libreria.alexandria.components.listado.LibroListadoPantalla
-import com.libreria.alexandria.components.login.LoginPantalla
 import com.libreria.alexandria.components.splash.SplashPantalla
 import com.libreria.alexandria.ui.theme.AlexandriaTheme
 
@@ -44,9 +43,9 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
         composable(Screen.Splash.route) {
             SplashPantalla(navController = navController)
         }
-        // Solamente si el usuario no está logueado.
+        // Solamente si el usuario no esta logueado.
         composable(Screen.Login.route) {
-            LoginPantalla(navController = navController)
+            // TODO: Login
         }
         composable(Screen.BookList.route) {
             LibroListadoPantalla(navController = navController)
