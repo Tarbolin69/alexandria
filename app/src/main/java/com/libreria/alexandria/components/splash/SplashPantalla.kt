@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.google.firebase.auth.FirebaseAuth
 import com.libreria.alexandria.R
 import com.libreria.alexandria.components.Screen
 import kotlinx.coroutines.delay
@@ -39,9 +40,12 @@ fun SplashPantalla(
     // programa cuando los intentas renderizar.
     imagenVector: Painter = painterResource(R.drawable.nega_libro)
 ) {
+    val usuarioActual = FirebaseAuth.getInstance().currentUser
+    val rutaDestino = if (usuarioActual != null) Screen.BookList.route else Screen.Login.route
+
     LaunchedEffect(Unit) {
         delay(2000L)
-        navController.navigate(Screen.BookList.route) {
+        navController.navigate(rutaDestino) {
             popUpTo(Screen.Splash.route) { inclusive = true }
         }
     }

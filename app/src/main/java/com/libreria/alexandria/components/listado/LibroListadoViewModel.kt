@@ -40,7 +40,7 @@ class LibrosViewModel(private val repository: LibroRepositorio) : ViewModel() {
     // de la pantalla.
     private var paginaActual = 1
     private var esUltimaPagina = false
-    // Lista de todos lo libros cargados
+    // Lista de todos los libros cargados
     private val librosCompilados = mutableListOf<Libro>()
     private var modoActual: ModoBusqueda? = null
 
