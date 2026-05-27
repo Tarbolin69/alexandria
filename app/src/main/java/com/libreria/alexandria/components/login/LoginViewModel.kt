@@ -1,5 +1,7 @@
 package com.libreria.alexandria.components.login
 
+// Maneja la autenticación por medio de Google.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.libreria.alexandria.data.AuthRepositorio

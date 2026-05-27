@@ -31,12 +31,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
+// Una clase temporaria para mostrar la funcionalidad
+// de reseñas de usuario en la pantalla de detalles.
 private data class ResenaPlaceholder(
     val usuario: String,
     val texto: String,
     val puntuacion: Int,
 )
 
+// Los usuarios falsos en sí. Esto se va a borrar
+// cuando se implemente la DB de Usuarios y Reseñas.
 private val resenasPlaceholder = listOf(
     ResenaPlaceholder("usuario01", "Una obra fascinante que atrapa desde la primera página.", 5),
     ResenaPlaceholder("lector_ávido", "Buen libro, aunque el ritmo decae en la mitad.", 4),
@@ -143,6 +147,7 @@ fun LibroDetallePantalla(
                         )
                     }
 
+                    // Itera por todas las reseñas
                     items(resenasPlaceholder, key = { it.usuario }) { resena ->
                         ResenaItem(resena)
                     }

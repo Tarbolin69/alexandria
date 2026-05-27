@@ -1,5 +1,8 @@
 package com.libreria.alexandria.components.detalle
 
+// Maneja la carga de información de un libro
+// desde la Works API de Open Library.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.libreria.alexandria.data.LibroRepositorio
@@ -22,7 +25,10 @@ sealed interface LibroDetalleUiState {
 }
 
 class LibroDetalleViewModel(
+    // Desde aca se obtienen los datos remotos.
     private val repositorio: LibroRepositorio = ServiceLocator.libroRepositorio,
+    // Y estos dos sirven para identificar el
+    // libro que hay que buscar con la API.
     private val libroId: String,
     private val autor: String,
 ) : ViewModel() {

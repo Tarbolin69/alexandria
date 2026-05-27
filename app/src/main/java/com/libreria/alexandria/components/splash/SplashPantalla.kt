@@ -33,6 +33,10 @@ fun SplashPantalla(
     uiState: SplashUiState,
     onSplashFinished: (String) -> Unit,
     modifier: Modifier = Modifier,
+    // Aca tuve que usar Abode para crear el SVG usada para el
+    // Vector Drawable. Resulta que a Android no le gustan algunas
+    // formas matemáticas usadas por cierto software de vectores.
+    // Cuando intentaba lanzar la aplicación simplemente se caía.
     imagenVector: Painter = painterResource(R.drawable.nega_libro)
 ) {
     LaunchedEffect(uiState) {

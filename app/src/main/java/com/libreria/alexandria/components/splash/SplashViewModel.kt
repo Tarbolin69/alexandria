@@ -13,6 +13,9 @@ sealed interface SplashUiState {
     data class Navegar(val ruta: String) : SplashUiState
 }
 
+// Si el usuario ya está registrado y logueado, no hay razón
+// para llevarlo a la página de login. Lo lleva directamente
+// al listado de libros.
 class SplashViewModel(
     authRepositorio: AuthRepositorio = ServiceLocator.authRepositorio
 ) : ViewModel() {

@@ -1,5 +1,8 @@
 package com.libreria.alexandria.data
 
+// Capa de abstracción entre las API de Open Library
+// y los diferentes ViewModels que usan sus datos.
+
 interface LibroRepositorio {
     suspend fun buscarLibros(query: String, page: Int = 1, limit: Int = 20): Result<List<Libro>>
     suspend fun buscarPorGenero(subject: String, offset: Int = 0, limit: Int = 20): Result<List<Libro>>
