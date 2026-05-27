@@ -129,11 +129,11 @@ fun LoginPantalla(
 
 @Composable
 private fun BotonGoogle(
+    modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit,
     enabled: Boolean,
-    outlined: Boolean = false,
-    modifier: Modifier = Modifier
+    outlined: Boolean = false
 ) {
     if (outlined) {
         OutlinedButton(

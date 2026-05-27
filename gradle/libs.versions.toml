@@ -1,32 +1,19 @@
 [versions]
-activityComposeVersion = "1.9.3"
 agp = "9.1.1"
 coilCompose = "2.7.0"
-composeBomVersion = "2024.02.00"
 converterMoshi = "3.0.0"
-coreKtx = "1.10.1"
-coreKtxVersion = "1.15.0"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
 kotlinxCoroutinesAndroid = "1.11.0"
-lifecycleRuntimeKtx = "2.6.1"
-activityCompose = "1.13.0"
-kotlin = "2.2.10"
-composeBom = "2024.09.00"
-lifecycleRuntimeKtxVersion = "2.8.7"
+kotlin = "2.3.21"
 lifecycleViewmodelKtx = "2.10.0"
 lifecycleLivedataKtx = "2.10.0"
-fragmentKtx = "1.5.6"
 coreSplashscreen = "1.2.0"
-moshi = "2.0.0-alpha.1"
 moshiKotlin = "1.15.2"
 navigationRuntimeKtx = "2.9.8"
 navigationCompose = "2.9.8"
 pagingCompose = "3.5.0"
 pagingRuntimeKtx = "3.5.0"
 retrofit = "3.0.0"
-firebaseAuthKtx = "23.2.1"
 firebaseBom = "34.13.0"
 googleGmsGoogleServices = "4.4.4"
 credentials = "1.6.0"
@@ -68,7 +55,6 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
