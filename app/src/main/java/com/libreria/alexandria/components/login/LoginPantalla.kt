@@ -1,6 +1,9 @@
 package com.libreria.alexandria.components.login
 
 import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -29,18 +31,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.credentials.CredentialManager
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.libreria.alexandria.R
 import com.libreria.alexandria.components.Screen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginPantalla(
@@ -50,9 +48,25 @@ fun LoginPantalla(
     val viewModel: LoginViewModel = viewModel()
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val credentialManager = remember { CredentialManager.create(context) }
+    val activity = remember { context as? Activity }
     val imagenVector: Painter = painterResource(R.drawable.nega_libro)
+
+    val launcherGoogle = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                .addOnSuccessListener { cuenta ->
+                    viewModel.autenticarConGoogle(cuenta.idToken ?: "")
+                }
+                .addOnFailureListener { e ->
+                    val codigo = (e as? ApiException)?.statusCode
+                    viewModel.establecerError(
+                        "Error ($codigo): ${e.localizedMessage ?: "No se pudo iniciar sesión"}"
+                    )
+                }
+        }
+    }
 
     LaunchedEffect(estado) {
         if (estado is LoginEstadoUI.Autenticado) {
@@ -108,7 +122,14 @@ fun LoginPantalla(
             BotonGoogle(
                 text = "Iniciar sesión con Google",
                 onClick = {
-                    launchGoogleSignIn(scope, credentialManager, context, viewModel, true)
+                    activity?.let { act ->
+                        val opciones = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(act.getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build()
+                        val cliente = GoogleSignIn.getClient(act, opciones)
+                        launcherGoogle.launch(cliente.signInIntent)
+                    }
                 },
                 enabled = estado !is LoginEstadoUI.Cargando
             )
@@ -119,7 +140,14 @@ fun LoginPantalla(
                 text = "Registrarse con Google",
                 outlined = true,
                 onClick = {
-                    launchGoogleSignIn(scope, credentialManager, context, viewModel, false)
+                    activity?.let { act ->
+                        val opciones = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(act.getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build()
+                        val cliente = GoogleSignIn.getClient(act, opciones)
+                        launcherGoogle.launch(cliente.signInIntent)
+                    }
                 },
                 enabled = estado !is LoginEstadoUI.Cargando
             )
@@ -129,11 +157,11 @@ fun LoginPantalla(
 
 @Composable
 private fun BotonGoogle(
+    modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit,
     enabled: Boolean,
-    outlined: Boolean = false,
-    modifier: Modifier = Modifier
+    outlined: Boolean = false
 ) {
     if (outlined) {
         OutlinedButton(
@@ -173,34 +201,6 @@ private fun BotonGoogle(
                 text = "  $text",
                 style = MaterialTheme.typography.bodyLarge
             )
-        }
-    }
-}
-
-private fun launchGoogleSignIn(
-    scope: CoroutineScope,
-    credentialManager: CredentialManager,
-    context: android.content.Context,
-    viewModel: LoginViewModel,
-    soloCuentasExistentes: Boolean
-) {
-    val activity = context as? Activity ?: return
-    scope.launch {
-        try {
-            val googleIdOption = GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(soloCuentasExistentes)
-                .setServerClientId(activity.getString(R.string.default_web_client_id))
-                .build()
-            val request = GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
-                .build()
-            val result = credentialManager.getCredential(activity, request)
-            val googleIdTokenCredential = GoogleIdTokenCredential
-                .createFrom(result.credential.data)
-            viewModel.autenticarConGoogle(googleIdTokenCredential.idToken)
-        } catch (_: GetCredentialCancellationException) {
-        } catch (_: Exception) {
-            viewModel.establecerError("No se pudo conectar con Google. Revisa tu conexión.")
         }
     }
 }
