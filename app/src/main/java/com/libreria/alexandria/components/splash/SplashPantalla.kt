@@ -1,6 +1,6 @@
 package com.libreria.alexandria.components.splash
 
-// Yo intente buscar por todos lados, pero no pude
+// Yo intenté buscar por todos lados, pero no pude
 // encontrar manera alguna de remover el SplashScreen
 // nativo de Android Studio (el que tiene el logo de
 // android en fondo blanco). La única solución que vi
@@ -25,28 +25,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.google.firebase.auth.FirebaseAuth
 import com.libreria.alexandria.R
-import com.libreria.alexandria.components.Screen
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashPantalla(
-    navController: NavHostController,
+    uiState: SplashUiState,
+    onSplashFinished: (String) -> Unit,
     modifier: Modifier = Modifier,
-    // Tuve que usar Adobe aca porque a Android no le
-    // gusta como cierto software hace SVG y rompe el
-    // programa cuando los intentas renderizar.
     imagenVector: Painter = painterResource(R.drawable.nega_libro)
 ) {
-    val usuarioActual = FirebaseAuth.getInstance().currentUser
-    val rutaDestino = if (usuarioActual != null) Screen.BookList.route else Screen.Login.route
-
-    LaunchedEffect(Unit) {
-        delay(2000L)
-        navController.navigate(rutaDestino) {
-            popUpTo(Screen.Splash.route) { inclusive = true }
+    LaunchedEffect(uiState) {
+        if (uiState is SplashUiState.Navegar) {
+            delay(2000L)
+            onSplashFinished(uiState.ruta)
         }
     }
 

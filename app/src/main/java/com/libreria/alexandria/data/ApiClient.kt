@@ -1,6 +1,6 @@
 package com.libreria.alexandria.data
 
-// Conexion entre Retrofit y Moshi que
+// Conexión entre Retrofit y Moshi que
 // usa OpenLibraryAPI.kt y maneja los
 // datos que esta devuelve.
 

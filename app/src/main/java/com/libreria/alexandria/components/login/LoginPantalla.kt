@@ -1,8 +1,5 @@
 package com.libreria.alexandria.components.login
 
-
-// Login y Signup con Google usando Firebase Auth
-
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,8 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -35,35 +30,23 @@ import androidx.compose.ui.unit.dp
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.libreria.alexandria.R
-import com.libreria.alexandria.components.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginPantalla(
-    navController: NavHostController,
+    estado: LoginEstadoUI,
+    onAutenticarConGoogle: (String) -> Unit,
+    onEstablecerError: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: LoginViewModel = viewModel()
-    val estado by viewModel.uiState.collectAsStateWithLifecycle()
     val contexto = LocalContext.current
     val scope = rememberCoroutineScope()
     val credentialManager = remember { CredentialManager.create(contexto) }
     val imagenVector: Painter = painterResource(R.drawable.nega_libro)
-
-    LaunchedEffect(estado) {
-        if (estado is LoginEstadoUI.Autenticado) {
-            navController.navigate(Screen.BookList.route) {
-                popUpTo(Screen.Splash.route) { inclusive = true }
-            }
-        }
-    }
 
     Box(
         modifier = modifier
@@ -94,7 +77,7 @@ fun LoginPantalla(
             when (estado) {
                 is LoginEstadoUI.Error -> {
                     Text(
-                        text = (estado as LoginEstadoUI.Error).mensaje,
+                        text = estado.mensaje,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(horizontal = 32.dp)
@@ -111,7 +94,12 @@ fun LoginPantalla(
             BotonGoogle(
                 text = "Iniciar sesión con Google",
                 onClick = {
-                    launchGoogleSignIn(scope, credentialManager, contexto, viewModel, true)
+                    launchGoogleSignIn(
+                        scope, credentialManager, contexto,
+                        onToken = { onAutenticarConGoogle(it) },
+                        onError = { onEstablecerError(it) },
+                        soloCuentasExistentes = true
+                    )
                 },
                 enabled = estado !is LoginEstadoUI.Cargando
             )
@@ -122,7 +110,12 @@ fun LoginPantalla(
                 text = "Registrarse con Google",
                 outlined = true,
                 onClick = {
-                    launchGoogleSignIn(scope, credentialManager, contexto, viewModel, false)
+                    launchGoogleSignIn(
+                        scope, credentialManager, contexto,
+                        onToken = { onAutenticarConGoogle(it) },
+                        onError = { onEstablecerError(it) },
+                        soloCuentasExistentes = false
+                    )
                 },
                 enabled = estado !is LoginEstadoUI.Cargando
             )
@@ -184,7 +177,8 @@ private fun launchGoogleSignIn(
     scope: CoroutineScope,
     credentialManager: CredentialManager,
     context: android.content.Context,
-    viewModel: LoginViewModel,
+    onToken: (String) -> Unit,
+    onError: (String) -> Unit,
     soloCuentasExistentes: Boolean
 ) {
     val activity = context as? Activity ?: return
@@ -201,10 +195,10 @@ private fun launchGoogleSignIn(
             val result = credentialManager.getCredential(activity, request)
             val googleIdTokenCredential = GoogleIdTokenCredential
                 .createFrom(result.credential.data)
-            viewModel.autenticarConGoogle(googleIdTokenCredential.idToken)
+            onToken(googleIdTokenCredential.idToken)
         } catch (_: GetCredentialCancellationException) {
         } catch (e: Exception) {
-            viewModel.establecerError(
+            onError(
                 "Error: ${e::class.simpleName} - ${e.message}"
             )
         }

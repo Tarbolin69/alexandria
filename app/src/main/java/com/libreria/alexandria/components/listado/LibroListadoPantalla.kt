@@ -34,32 +34,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.google.firebase.auth.FirebaseAuth
-import com.libreria.alexandria.components.Screen
-import com.libreria.alexandria.data.ApiClient
 import com.libreria.alexandria.data.Libro
-import com.libreria.alexandria.data.LibroRemoteDataSource
-import com.libreria.alexandria.data.LibroRepositorio
 
-// Open Library solamente tiene etiquetas en Inglés.
-// Inicialmente, solo las usé en inglés, pero estaba
-// medio raro con el texto en español del resto del
-// app. Un simple mapOf arregló esto.
 private val generos = mapOf(
     "Fantasia" to "Fantasy",
     "Ciencia ficción" to "Sci-fi",
@@ -70,40 +54,23 @@ private val generos = mapOf(
     "Biografía" to "Biography",
     "Terror" to "Horror",
     "Dramas" to "Drama"
-    // Técnicamente, podría añadir una cantidad
-    // infinita de generos, ya que Open Library
-    // hay un million de los mismos para cada
-    // libro que existe.
 )
 
-// La UI en si de la pantalla, con la barra de
-// búsqueda, las etiquetas y el LazyColumn.
 @Composable
 fun LibroListadoPantalla(
-    navController: NavHostController,
+    uiState: LibroEstadoUI,
+    generoElegido: String?,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
+    onBuscarPorGenero: (String) -> Unit,
+    onCargarSiguientePagina: () -> Unit,
+    onNavigateToDetail: (String, String) -> Unit,
+    onCerrarSesion: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Dependencias para que el resto de las funciones
-    // anden bien.
-    val fabrica = remember {
-        object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                val dataSource = LibroRemoteDataSource(ApiClient.api)
-                val repositorio = LibroRepositorio(dataSource)
-                return LibrosViewModel(repositorio) as T
-            }
-        }
-    }
-    val viewModel: LibrosViewModel = viewModel(factory = fabrica)
-
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val generoElegido by viewModel.selectedSubject.collectAsStateWithLifecycle()
-    var query by rememberSaveable { mutableStateOf("") }
     val listaEstado = rememberLazyListState()
 
-    // Carga más libros cuando se está llegando al
-    // final de la última página cargada.
     val cargarMas by remember {
         derivedStateOf {
             val ultimoLibroGenerado = listaEstado.layoutInfo.visibleItemsInfo.lastOrNull()
@@ -113,33 +80,28 @@ fun LibroListadoPantalla(
     }
     LaunchedEffect(cargarMas) {
         if (cargarMas) {
-            viewModel.cargarSiguientePagina()
+            onCargarSiguientePagina()
         }
     }
 
     Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
         OutlinedTextField(
             value = query,
-            onValueChange = { query = it },
+            onValueChange = onQueryChange,
             label = { Text("Buscar libros...") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
-                onSearch = { viewModel.buscarLibros(query) }
+                onSearch = { onSearch(query) }
             ),
             leadingIcon = {
-                IconButton(onClick = {
-                    FirebaseAuth.getInstance().signOut()
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }) {
+                IconButton(onClick = onCerrarSesion) {
                     Icon(Icons.Default.Close, contentDescription = "Cerrar sesión")
                 }
             },
             trailingIcon = {
-                IconButton(onClick = { viewModel.buscarLibros(query) }) {
+                IconButton(onClick = { onSearch(query) }) {
                     Icon(Icons.Default.Search, contentDescription = "Buscar")
                 }
             }
@@ -154,8 +116,8 @@ fun LibroListadoPantalla(
                 FilterChip(
                     selected = generos[genero] == generoElegido,
                     onClick = {
-                        query = ""
-                        viewModel.buscarPorGenero(generos[genero] ?: genero)
+                        onQueryChange("")
+                        onBuscarPorGenero(generos[genero] ?: genero)
                     },
                     label = { Text(genero) }
                 )
@@ -164,8 +126,8 @@ fun LibroListadoPantalla(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        when (val estado = uiState) {
-            is LibrosViewModel.LibroEstadoUI.Cargando -> {
+        when (uiState) {
+            is LibroEstadoUI.Cargando -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -173,20 +135,20 @@ fun LibroListadoPantalla(
                     CircularProgressIndicator()
                 }
             }
-            is LibrosViewModel.LibroEstadoUI.Error -> {
+            is LibroEstadoUI.Error -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = estado.message,
+                        text = uiState.message,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
-            is LibrosViewModel.LibroEstadoUI.Completado -> {
-                if (estado.books.isEmpty()) {
+            is LibroEstadoUI.Completado -> {
+                if (uiState.books.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -201,13 +163,11 @@ fun LibroListadoPantalla(
                         state = listaEstado,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(estado.books, key = { it.id }) { libro ->
+                        items(uiState.books, key = { it.id }) { libro ->
                             LibroListadoItem(
                                 libro = libro,
                                 onClick = {
-                                    navController.navigate(
-                                        Screen.BookDetail.createRoute(libro.id, libro.autor)
-                                    )
+                                    onNavigateToDetail(libro.id, libro.autor)
                                 }
                             )
                         }

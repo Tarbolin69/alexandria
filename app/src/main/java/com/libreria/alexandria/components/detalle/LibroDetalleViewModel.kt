@@ -3,32 +3,32 @@ package com.libreria.alexandria.components.detalle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.libreria.alexandria.data.LibroRepositorio
+import com.libreria.alexandria.data.ServiceLocator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// Un "state-holder" básico para
-// el esqueleto del libro.
-data class LibroDetalleUiState(
-    val titulo: String = "",
-    val autor: String = "",
-    val cubiertaUrl: String = "",
-    val pubFecha: String = "",
-    val descripcion: String = "",
-    val isLoading: Boolean = true,
-    val error: String? = null,
-)
+sealed interface LibroDetalleUiState {
+    data class Cargando(val autor: String) : LibroDetalleUiState
+    data class Error(val mensaje: String) : LibroDetalleUiState
+    data class Completado(
+        val titulo: String,
+        val autor: String,
+        val cubiertaUrl: String,
+        val pubFecha: String,
+        val descripcion: String,
+    ) : LibroDetalleUiState
+}
 
-// Expone 1 libro y sus detalles.
 class LibroDetalleViewModel(
-    private val repositorio: LibroRepositorio,
+    private val repositorio: LibroRepositorio = ServiceLocator.libroRepositorio,
     private val libroId: String,
     private val autor: String,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(
-        LibroDetalleUiState(autor = autor, isLoading = true)
+    private val _uiState = MutableStateFlow<LibroDetalleUiState>(
+        LibroDetalleUiState.Cargando(autor = autor)
     )
     val uiState: StateFlow<LibroDetalleUiState> = _uiState.asStateFlow()
 
@@ -36,27 +36,22 @@ class LibroDetalleViewModel(
         cargarDetalle()
     }
 
-    // Agarra errors al intentar cargar los detalles del
-    // libro. Si obtiene buen los resultados, los llena
-    // el state-holder de la UI
     private fun cargarDetalle() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            _uiState.value = LibroDetalleUiState.Cargando(autor = autor)
             repositorio.obtenerInfoDetalle(libroId, autor)
                 .onSuccess { info ->
-                    _uiState.value = LibroDetalleUiState(
+                    _uiState.value = LibroDetalleUiState.Completado(
                         titulo = info.titulo,
                         autor = info.autor,
                         cubiertaUrl = info.cubiertaId,
                         pubFecha = info.pubFecha,
                         descripcion = info.descripcion,
-                        isLoading = false,
                     )
                 }
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = e.message ?: "Error al cargar información.",
+                    _uiState.value = LibroDetalleUiState.Error(
+                        mensaje = e.message ?: "Error al cargar información."
                     )
                 }
         }
