@@ -186,6 +186,18 @@ fun LibroListadoPantalla(
                                 }
                             )
                         }
+                        if (uiState.isLoadingMore) {
+                            item(key = "cargando_mas") {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
                     }
                 }
             }

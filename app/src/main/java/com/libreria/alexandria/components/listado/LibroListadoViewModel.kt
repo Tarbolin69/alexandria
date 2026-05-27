@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 sealed interface LibroEstadoUI {
     data object Cargando : LibroEstadoUI
-    data class Completado(val books: List<Libro>) : LibroEstadoUI
+    data class Completado(val books: List<Libro>, val isLoadingMore: Boolean = false) : LibroEstadoUI
     data class Error(val message: String) : LibroEstadoUI
 }
 
@@ -78,14 +78,24 @@ class LibrosViewModel(
     }
 
     fun cargarSiguientePagina() {
-        if (esUltimaPagina || _uiState.value is LibroEstadoUI.Cargando) return
+        if (esUltimaPagina) return
+        val estadoActual = _uiState.value
+        if (estadoActual is LibroEstadoUI.Completado && estadoActual.isLoadingMore) return
         paginaActual++
         ejecutarBusqueda()
     }
 
     private fun ejecutarBusqueda() {
         viewModelScope.launch {
-            _uiState.value = LibroEstadoUI.Cargando
+            val esCargaInicial = paginaActual == 1
+            if (esCargaInicial) {
+                _uiState.value = LibroEstadoUI.Cargando
+            } else {
+                val estadoActual = _uiState.value
+                if (estadoActual is LibroEstadoUI.Completado) {
+                    _uiState.value = estadoActual.copy(isLoadingMore = true)
+                }
+            }
             val resultado = when (val modo = modoActual) {
                 is ModoBusqueda.Texto -> repository.buscarLibros(modo.query, paginaActual)
                 // A diferencia de Search API, Subject API usa offset en vez de page
@@ -99,7 +109,11 @@ class LibrosViewModel(
                     _uiState.value = LibroEstadoUI.Completado(librosCompilados.toList())
                 }
                 .onFailure { e ->
-                    _uiState.value = LibroEstadoUI.Error(e.message ?: "Ocurrió un error")
+                    if (esCargaInicial) {
+                        _uiState.value = LibroEstadoUI.Error(e.message ?: "Ocurrió un error")
+                    } else {
+                        _uiState.value = LibroEstadoUI.Completado(librosCompilados.toList())
+                    }
                 }
         }
     }
