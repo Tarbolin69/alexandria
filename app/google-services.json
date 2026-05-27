@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "287801791852",
+    "project_id": "alexandria-d90c6",
+    "storage_bucket": "alexandria-d90c6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287801791852:android:32f2e2732a226d86694f49",
+        "android_client_info": {
+          "package_name": "com.libreria.alexandria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "287801791852-cfhdiq9knm6nuuplbcv4gpcq4dtmsvgg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.libreria.alexandria",
+            "certificate_hash": "e68677cfcd140d849715f73ff63e45010778e6d4"
+          }
+        },
+        {
+          "client_id": "287801791852-4m8aud256qmqj28k9msniu4tom7ejabt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFvYVds3V--tsP2gkkF1YDtZ5RMlgEU7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "287801791852-4m8aud256qmqj28k9msniu4tom7ejabt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

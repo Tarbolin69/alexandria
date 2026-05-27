@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -48,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.google.firebase.auth.FirebaseAuth
 import com.libreria.alexandria.components.Screen
 import com.libreria.alexandria.data.ApiClient
 import com.libreria.alexandria.data.Libro
@@ -126,6 +128,16 @@ fun LibroListadoPantalla(
             keyboardActions = KeyboardActions(
                 onSearch = { viewModel.buscarLibros(query) }
             ),
+            leadingIcon = {
+                IconButton(onClick = {
+                    FirebaseAuth.getInstance().signOut()
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }) {
+                    Icon(Icons.Default.Close, contentDescription = "Cerrar sesión")
+                }
+            },
             trailingIcon = {
                 IconButton(onClick = { viewModel.buscarLibros(query) }) {
                     Icon(Icons.Default.Search, contentDescription = "Buscar")
