@@ -1,17 +1,15 @@
 package com.libreria.alexandria.components.listado
 
-// Gestiona la búsqueda y listado paginado de libros
-// por la Search/Subject API de Open Library.
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.libreria.alexandria.data.Libro
 import com.libreria.alexandria.data.LibroRepositorio
-import com.libreria.alexandria.data.ServiceLocator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed interface LibroEstadoUI {
     data object Cargando : LibroEstadoUI
@@ -19,9 +17,9 @@ sealed interface LibroEstadoUI {
     data class Error(val message: String) : LibroEstadoUI
 }
 
-class LibrosViewModel(
-    // Los datos remotos del Search API
-    private val repository: LibroRepositorio = ServiceLocator.libroRepositorio
+@HiltViewModel
+class LibrosViewModel @Inject constructor(
+    private val repository: LibroRepositorio
 ) : ViewModel() {
     // Los dos modos de búsqueda disponibles
     // en la pantalla: por nombre o género.

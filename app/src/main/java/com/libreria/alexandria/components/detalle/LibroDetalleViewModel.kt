@@ -1,16 +1,15 @@
 package com.libreria.alexandria.components.detalle
 
-// Maneja la carga de información de un libro
-// desde la Works API de Open Library.
-
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.libreria.alexandria.data.LibroRepositorio
-import com.libreria.alexandria.data.ServiceLocator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed interface LibroDetalleUiState {
     data class Cargando(val autor: String) : LibroDetalleUiState
@@ -24,14 +23,14 @@ sealed interface LibroDetalleUiState {
     ) : LibroDetalleUiState
 }
 
-class LibroDetalleViewModel(
-    // Desde aca se obtienen los datos remotos.
-    private val repositorio: LibroRepositorio = ServiceLocator.libroRepositorio,
-    // Y estos dos sirven para identificar el
-    // libro que hay que buscar con la API.
-    private val libroId: String,
-    private val autor: String,
+@HiltViewModel
+class LibroDetalleViewModel @Inject constructor(
+    private val repositorio: LibroRepositorio,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val libroId: String = savedStateHandle["bookId"] ?: ""
+    private val autor: String = savedStateHandle["autor"] ?: ""
 
     private val _uiState = MutableStateFlow<LibroDetalleUiState>(
         LibroDetalleUiState.Cargando(autor = autor)

@@ -11,10 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -28,9 +26,10 @@ import com.libreria.alexandria.components.login.LoginPantalla
 import com.libreria.alexandria.components.login.LoginViewModel
 import com.libreria.alexandria.components.splash.SplashPantalla
 import com.libreria.alexandria.components.splash.SplashViewModel
-import com.libreria.alexandria.data.ServiceLocator
 import com.libreria.alexandria.ui.theme.AlexandriaTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,13 +53,7 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize()
     ) {
         composable(Screen.Splash.route) {
-            val splashViewModel: SplashViewModel = viewModel(
-                factory = object : ViewModelProvider.Factory {
-                    @Suppress("UNCHECKED_CAST")
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                        SplashViewModel(ServiceLocator.authRepositorio) as T
-                }
-            )
+            val splashViewModel: SplashViewModel = hiltViewModel()
             val splashEstado by splashViewModel.uiState.collectAsStateWithLifecycle()
             SplashPantalla(
                 uiState = splashEstado,
@@ -72,13 +65,7 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
             )
         }
         composable(Screen.Login.route) {
-            val loginViewModel: LoginViewModel = viewModel(
-                factory = object : ViewModelProvider.Factory {
-                    @Suppress("UNCHECKED_CAST")
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                        LoginViewModel(ServiceLocator.authRepositorio) as T
-                }
-            )
+            val loginViewModel: LoginViewModel = hiltViewModel()
             val loginEstado by loginViewModel.uiState.collectAsStateWithLifecycle()
 
             LaunchedEffect(loginEstado) {
@@ -96,13 +83,7 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
             )
         }
         composable(Screen.BookList.route) {
-            val listadoViewModel: LibrosViewModel = viewModel(
-                factory = object : ViewModelProvider.Factory {
-                    @Suppress("UNCHECKED_CAST")
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                        LibrosViewModel(ServiceLocator.libroRepositorio) as T
-                }
-            )
+            val listadoViewModel: LibrosViewModel = hiltViewModel()
             val uiState by listadoViewModel.uiState.collectAsStateWithLifecycle()
             val generoElegido by listadoViewModel.selectedSubject.collectAsStateWithLifecycle()
             val query by listadoViewModel.query.collectAsStateWithLifecycle()
@@ -119,24 +100,14 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
                     navController.navigate(Screen.BookDetail.createRoute(libroId, autor))
                 },
                 onCerrarSesion = {
-                    ServiceLocator.authRepositorio.cerrarSesion()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
             )
         }
-        composable(Screen.BookDetail.ROUTE_PATTERN) { backStackEntry ->
-            val libroId = backStackEntry.arguments?.getString("bookId") ?: ""
-            val autor = backStackEntry.arguments?.getString("autor") ?: ""
-            val detalleViewModel: LibroDetalleViewModel = viewModel(
-                key = libroId,
-                factory = object : ViewModelProvider.Factory {
-                    @Suppress("UNCHECKED_CAST")
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                        LibroDetalleViewModel(ServiceLocator.libroRepositorio, libroId, autor) as T
-                }
-            )
+        composable(Screen.BookDetail.ROUTE_PATTERN) {
+            val detalleViewModel: LibroDetalleViewModel = hiltViewModel()
             val estado by detalleViewModel.uiState.collectAsStateWithLifecycle()
             LibroDetallePantalla(
                 estado = estado,
