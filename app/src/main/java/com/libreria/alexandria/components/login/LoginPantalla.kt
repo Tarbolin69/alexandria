@@ -1,5 +1,7 @@
 package com.libreria.alexandria.components.login
 
+// Pantalla de login/signup con Google usando Firebase Auth
+
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,6 +48,7 @@ fun LoginPantalla(
     val contexto = LocalContext.current
     val scope = rememberCoroutineScope()
     val credentialManager = remember { CredentialManager.create(contexto) }
+    // Misma imagen que el SplashScreen
     val imagenVector: Painter = painterResource(R.drawable.nega_libro)
 
     Box(
@@ -92,25 +95,28 @@ fun LoginPantalla(
             }
 
             BotonGoogle(
-                text = "Iniciar sesión con Google",
+                texto = "Iniciar sesión con Google",
                 onClick = {
-                    launchGoogleSignIn(
+                    intentarGoogleSignIn(
                         scope, credentialManager, contexto,
                         onToken = { onAutenticarConGoogle(it) },
                         onError = { onEstablecerError(it) },
                         soloCuentasExistentes = true
                     )
                 },
+                // Esto es para evitar que alguien apreté el
+                // botón de login/signup cuando la app está
+                // intentando autenticar la cuenta de Google.
                 enabled = estado !is LoginEstadoUI.Cargando
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             BotonGoogle(
-                text = "Registrarse con Google",
+                texto = "Registrarse con Google",
                 outlined = true,
                 onClick = {
-                    launchGoogleSignIn(
+                    intentarGoogleSignIn(
                         scope, credentialManager, contexto,
                         onToken = { onAutenticarConGoogle(it) },
                         onError = { onEstablecerError(it) },
@@ -126,7 +132,7 @@ fun LoginPantalla(
 @Composable
 private fun BotonGoogle(
     modifier: Modifier = Modifier,
-    text: String,
+    texto: String,
     onClick: () -> Unit,
     enabled: Boolean,
     outlined: Boolean = false
@@ -147,7 +153,7 @@ private fun BotonGoogle(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "  $text",
+                text = "  $texto",
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -166,14 +172,14 @@ private fun BotonGoogle(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "  $text",
+                text = "  $texto",
                 style = MaterialTheme.typography.bodyLarge
             )
         }
     }
 }
 
-private fun launchGoogleSignIn(
+private fun intentarGoogleSignIn(
     scope: CoroutineScope,
     credentialManager: CredentialManager,
     context: android.content.Context,

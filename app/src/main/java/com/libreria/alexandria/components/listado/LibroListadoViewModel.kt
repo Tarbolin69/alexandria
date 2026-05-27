@@ -1,5 +1,8 @@
 package com.libreria.alexandria.components.listado
 
+// Gestiona la búsqueda y listado paginado de libros
+// por la Search/Subject API de Open Library.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.libreria.alexandria.data.Libro
@@ -17,8 +20,11 @@ sealed interface LibroEstadoUI {
 }
 
 class LibrosViewModel(
+    // Los datos remotos del Search API
     private val repository: LibroRepositorio = ServiceLocator.libroRepositorio
 ) : ViewModel() {
+    // Los dos modos de búsqueda disponibles
+    // en la pantalla: por nombre o género.
     private sealed interface ModoBusqueda {
         data class Texto(val query: String) : ModoBusqueda
         data class Genero(val subject: String) : ModoBusqueda
@@ -27,8 +33,8 @@ class LibrosViewModel(
     private val _uiState = MutableStateFlow<LibroEstadoUI>(LibroEstadoUI.Error(""))
     val uiState: StateFlow<LibroEstadoUI> = _uiState.asStateFlow()
 
-    private val _selectedSubject = MutableStateFlow<String?>(null)
-    val selectedSubject: StateFlow<String?> = _selectedSubject.asStateFlow()
+    private val _generoSeleccionado = MutableStateFlow<String?>(null)
+    val selectedSubject: StateFlow<String?> = _generoSeleccionado.asStateFlow()
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
@@ -42,10 +48,19 @@ class LibrosViewModel(
     private val librosCompilados = mutableListOf<Libro>()
     private var modoActual: ModoBusqueda? = null
 
+
+    // Estos dos hacen básicamente lo mismo:
+    // resetean la paginación, los libros
+    // guardados y borran el elemento de
+    // búsqueda anterior, que puede ser la
+    // etiqueta de género o texto de búsqueda.
+    //
+    // Seguido, ejecutan la búsqueda de libros.
+
     fun buscarLibros(query: String) {
         if (query.isBlank()) return
         modoActual = ModoBusqueda.Texto(query)
-        _selectedSubject.value = null
+        _generoSeleccionado.value = null
         paginaActual = 1
         esUltimaPagina = false
         librosCompilados.clear()
@@ -54,7 +69,7 @@ class LibrosViewModel(
 
     fun buscarPorGenero(subject: String) {
         modoActual = ModoBusqueda.Genero(subject)
-        _selectedSubject.value = subject
+        _generoSeleccionado.value = subject
         _query.value = ""
         paginaActual = 1
         esUltimaPagina = false
@@ -73,6 +88,7 @@ class LibrosViewModel(
             _uiState.value = LibroEstadoUI.Cargando
             val resultado = when (val modo = modoActual) {
                 is ModoBusqueda.Texto -> repository.buscarLibros(modo.query, paginaActual)
+                // A diferencia de Search API, Subject API usa offset en vez de page
                 is ModoBusqueda.Genero -> repository.buscarPorGenero(modo.subject, (paginaActual - 1) * 20)
                 null -> return@launch
             }

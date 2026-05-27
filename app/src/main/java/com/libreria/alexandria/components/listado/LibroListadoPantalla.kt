@@ -44,6 +44,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.libreria.alexandria.data.Libro
 
+// Subject API de Open Library usa generos en inglés, y al
+// principio simplemente puse las tags con los nombres en
+// inglés. Pero esto se veía medio raro con el resto del
+// texto español de la app. Se arregló fácil con un mapOf.
 private val generos = mapOf(
     "Fantasia" to "Fantasy",
     "Ciencia ficción" to "Sci-fi",
@@ -54,6 +58,10 @@ private val generos = mapOf(
     "Biografía" to "Biography",
     "Terror" to "Horror",
     "Dramas" to "Drama"
+    // Técnicamente, podría añadir un número infinito de
+    // generos, dado que Open Library le da más de 100
+    // generos diferentes a cada libro. Por ahora, puse
+    // los más comunes.
 )
 
 @Composable
@@ -66,6 +74,8 @@ fun LibroListadoPantalla(
     onBuscarPorGenero: (String) -> Unit,
     onCargarSiguientePagina: () -> Unit,
     onNavigateToDetail: (String, String) -> Unit,
+    // Parte temporal de la pantalla para testear
+    // cierre de sesión.
     onCerrarSesion: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -95,6 +105,7 @@ fun LibroListadoPantalla(
             keyboardActions = KeyboardActions(
                 onSearch = { onSearch(query) }
             ),
+            // El botón de cierre de sesión, que es una X
             leadingIcon = {
                 IconButton(onClick = onCerrarSesion) {
                     Icon(Icons.Default.Close, contentDescription = "Cerrar sesión")
@@ -109,6 +120,7 @@ fun LibroListadoPantalla(
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // La lista de todos los generos, horizontalmente escroleable.
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -159,6 +171,7 @@ fun LibroListadoPantalla(
                         )
                     }
                 } else {
+                    // ¡La lista infinita de libros!
                     LazyColumn(
                         state = listaEstado,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
