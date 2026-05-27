@@ -1,6 +1,6 @@
 package com.libreria.alexandria.components.splash
 
-// Intente buscar por todos lados, pero no pude
+// Yo intente buscar por todos lados, pero no pude
 // encontrar manera alguna de remover el SplashScreen
 // nativo de Android Studio (el que tiene el logo de
 // android en fondo blanco). La única solución que vi

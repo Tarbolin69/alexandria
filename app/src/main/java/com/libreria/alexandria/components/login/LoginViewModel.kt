@@ -1,5 +1,7 @@
 package com.libreria.alexandria.components.login
 
+// Viewmodel de Login y Signup con Google usando Firebase Auth
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Tasks

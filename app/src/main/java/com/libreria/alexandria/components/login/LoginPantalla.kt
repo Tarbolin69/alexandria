@@ -1,5 +1,8 @@
 package com.libreria.alexandria.components.login
 
+
+// Login y Signup con Google usando Firebase Auth
+
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -44,7 +44,7 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
         composable(Screen.Splash.route) {
             SplashPantalla(navController = navController)
         }
-        // Solamente si el usuario no está logueado.
+        // Aparece olamente si el usuario no está logueado.
         composable(Screen.Login.route) {
             LoginPantalla(navController = navController)
         }

@@ -1,7 +1,7 @@
 package com.libreria.alexandria.components
 
 // Maneja la navegación de la app. Lo copie
-// del git de la clase y lo modifique un poco.
+// del github de la clase y lo modifique un poco.
 
 sealed class Screen(val route: String) {
     object Splash: Screen("splash_screen")
