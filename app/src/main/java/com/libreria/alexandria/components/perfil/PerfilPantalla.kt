@@ -25,8 +25,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun PerfilPantalla(
     uiState: PerfilUiState,
@@ -65,12 +70,23 @@ fun PerfilPantalla(
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Foto de perfil",
-                    modifier = Modifier.size(40.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                val fotoUrl = usuarioInfo?.fotoUrl
+                if (fotoUrl != null) {
+                    GlideImage(
+                        model = fotoUrl,
+                        contentDescription = "Foto de perfil",
+                        modifier = Modifier.size(72.dp),
+                        contentScale = ContentScale.Crop,
+                        failure = placeholder(com.libreria.alexandria.R.drawable.baseline_book_24)
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Foto de perfil",
+                        modifier = Modifier.size(40.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
 
