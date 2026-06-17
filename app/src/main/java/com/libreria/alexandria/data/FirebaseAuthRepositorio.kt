@@ -24,4 +24,13 @@ class FirebaseAuthRepositorio : AuthRepositorio {
     }
 
     override fun cerrarSesion() = auth.signOut()
+
+    override fun obtenerUsuarioInfo(): PerfilUsuarioInfo? {
+        val user = auth.currentUser ?: return null
+        return PerfilUsuarioInfo(
+            nombre = user.displayName ?: "Usuario",
+            email = user.email ?: "",
+            fotoUrl = user.photoUrl?.toString()
+        )
+    }
 }
