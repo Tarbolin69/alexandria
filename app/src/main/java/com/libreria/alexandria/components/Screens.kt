@@ -10,9 +10,10 @@ sealed class Screen(val route: String) {
     // Dado que cada página de detalles es diferente, aca
     // use parámetros para esta ruta (lo recomienda Google).
     object BookDetail: Screen("book_detail_screen") {
-        const val ROUTE_PATTERN = "book_detail_screen/{bookId}/{autor}"
-        fun createRoute(bookId: String, autor: String): String {
-            return "book_detail_screen/$bookId/${android.net.Uri.encode(autor)}"
+        const val ROUTE_PATTERN = "book_detail_screen/{bookId}/{autor}?pubFecha={pubFecha}"
+        fun createRoute(bookId: String, autor: String, pubFecha: String = ""): String {
+            val fechaEncoded = android.net.Uri.encode(pubFecha)
+            return "book_detail_screen/$bookId/${android.net.Uri.encode(autor)}?pubFecha=$fechaEncoded"
         }
     }
     object BookReview: Screen("book_review_screen")

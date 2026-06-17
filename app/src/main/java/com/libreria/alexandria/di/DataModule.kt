@@ -10,8 +10,10 @@ import com.libreria.alexandria.data.LibroRepositorio
 import com.libreria.alexandria.data.LibroRepositorioImpl
 import com.libreria.alexandria.data.OpenLibraryAPI
 import com.libreria.alexandria.data.PerfilFirebaseRepositorio
+import com.libreria.alexandria.data.LibroGuardadoRepositorio
 import com.libreria.alexandria.data.PerfilRepositorio
 import com.libreria.alexandria.data.local.AppDatabase
+import com.libreria.alexandria.data.local.LibroGuardadoDao
 import com.libreria.alexandria.data.local.PerfilDao
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.moshi.Moshi
@@ -61,10 +63,15 @@ object DataModule {
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "alexandria.db").build()
+        Room.databaseBuilder(context, AppDatabase::class.java, "alexandria.db")
+            .fallbackToDestructiveMigration(false)
+            .build()
 
     @Provides
     fun providePerfilDao(database: AppDatabase): PerfilDao = database.perfilDao()
+
+    @Provides
+    fun provideLibroGuardadoDao(database: AppDatabase): LibroGuardadoDao = database.libroGuardadoDao()
 
     @Provides
     @Singleton

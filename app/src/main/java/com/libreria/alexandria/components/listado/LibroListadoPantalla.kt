@@ -77,7 +77,7 @@ fun LibroListadoPantalla(
     onSearch: (String) -> Unit,
     onBuscarPorGenero: (String) -> Unit,
     onCargarSiguientePagina: () -> Unit,
-    onNavigateToDetail: (String, String) -> Unit,
+    onNavigateToDetail: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listaEstado = rememberLazyListState()
@@ -176,7 +176,7 @@ fun LibroListadoPantalla(
                             LibroListadoItem(
                                 libro = libro,
                                 onClick = {
-                                    onNavigateToDetail(libro.id, libro.autor)
+                                    onNavigateToDetail(libro.id, libro.autor, libro.pubFecha)
                                 }
                             )
                         }

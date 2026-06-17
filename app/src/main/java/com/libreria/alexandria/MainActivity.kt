@@ -13,16 +13,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.libreria.alexandria.components.AlexandriaNavBar
 import com.libreria.alexandria.components.Screen
 import com.libreria.alexandria.components.bottomNavItems
 import com.libreria.alexandria.components.detalle.LibroDetallePantalla
 import com.libreria.alexandria.components.detalle.LibroDetalleViewModel
 import com.libreria.alexandria.components.libreria.LibreriaPantalla
+import com.libreria.alexandria.components.libreria.LibreriaViewModel
 import com.libreria.alexandria.components.listado.LibroListadoPantalla
 import com.libreria.alexandria.components.listado.LibrosViewModel
 import com.libreria.alexandria.components.login.LoginEstadoUI
@@ -125,21 +128,39 @@ fun AlexandriaNavHost(
                 onSearch = { listadoViewModel.buscarLibros(it) },
                 onBuscarPorGenero = { listadoViewModel.buscarPorGenero(it) },
                 onCargarSiguientePagina = { listadoViewModel.cargarSiguientePagina() },
-                onNavigateToDetail = { libroId, autor ->
-                    navController.navigate(Screen.BookDetail.createRoute(libroId, autor))
+                onNavigateToDetail = { libroId, autor, pubFecha ->
+                    navController.navigate(Screen.BookDetail.createRoute(libroId, autor, pubFecha))
                 }
             )
         }
-        composable(Screen.BookDetail.ROUTE_PATTERN) {
+        composable(
+            route = Screen.BookDetail.ROUTE_PATTERN,
+            arguments = listOf(
+                navArgument("pubFecha") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) {
             val detalleViewModel: LibroDetalleViewModel = hiltViewModel()
             val estado by detalleViewModel.uiState.collectAsStateWithLifecycle()
+            val esMarcado by detalleViewModel.esMarcado.collectAsStateWithLifecycle()
             LibroDetallePantalla(
                 estado = estado,
-                onRegresar = { navController.popBackStack() }
+                esMarcado = esMarcado,
+                onRegresar = { navController.popBackStack() },
+                onAlternarMarcador = { detalleViewModel.alternarMarcador() }
             )
         }
         composable(Screen.BookLibrary.route) {
-            LibreriaPantalla()
+            val libreriaViewModel: LibreriaViewModel = hiltViewModel()
+            val libreriaEstado by libreriaViewModel.uiState.collectAsStateWithLifecycle()
+            LibreriaPantalla(
+                uiState = libreriaEstado,
+                onNavigateToDetail = { libroId, autor, pubFecha ->
+                    navController.navigate(Screen.BookDetail.createRoute(libroId, autor, pubFecha))
+                }
+            )
         }
         composable(Screen.UsuarioPerfil.route) {
             val perfilViewModel: PerfilPantallaViewModel = hiltViewModel()

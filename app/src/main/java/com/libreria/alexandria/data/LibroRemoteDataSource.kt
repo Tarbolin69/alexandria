@@ -71,8 +71,12 @@ class LibroRemoteDataSource(private val api: OpenLibraryAPI) {
             cubiertaId = if (portadaId != null) {
                 "https://covers.openlibrary.org/b/id/$portadaId-M.jpg"
             } else "",
-            pubFecha = respuesta.pubFecha ?: "N/A",
+            pubFecha = respuesta.pubFecha?.extraerAño() ?: "N/A",
             descripcion = respuesta.descripcion ?: "Sin descripción",
         )
     }
 }
+
+private val añoRegex = Regex("\\b(\\d{4})\\b")
+
+private fun String.extraerAño(): String = añoRegex.find(this)?.groupValues?.get(1) ?: this
