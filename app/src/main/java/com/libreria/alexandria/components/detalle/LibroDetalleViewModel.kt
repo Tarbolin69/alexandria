@@ -34,8 +34,8 @@ class LibroDetalleViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val libroId: String = savedStateHandle["bookId"] ?: ""
-    private val autor: String = savedStateHandle["autor"] ?: ""
+    val libroId: String = savedStateHandle["bookId"] ?: ""
+    val autor: String = savedStateHandle["autor"] ?: ""
     private val pubFechaPasada: String = savedStateHandle.get<String>("pubFecha") ?: ""
 
     private val _esMarcado = MutableStateFlow(false)

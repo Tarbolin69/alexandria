@@ -18,6 +18,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -60,6 +62,7 @@ fun LibroDetallePantalla(
     esMarcado: Boolean,
     onRegresar: () -> Unit,
     onAlternarMarcador: () -> Unit,
+    onCalificar: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -126,6 +129,15 @@ fun LibroDetallePantalla(
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = onCalificar,
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                    ),
+                                ) {
+                                    Text(text = "Calificar")
+                                }
                             }
                         }
                     }

@@ -23,6 +23,7 @@ import com.libreria.alexandria.components.AlexandriaNavBar
 import com.libreria.alexandria.components.Screen
 import com.libreria.alexandria.components.bottomNavItems
 import com.libreria.alexandria.components.detalle.LibroDetallePantalla
+import com.libreria.alexandria.components.detalle.LibroDetalleUiState
 import com.libreria.alexandria.components.detalle.LibroDetalleViewModel
 import com.libreria.alexandria.components.libreria.LibreriaPantalla
 import com.libreria.alexandria.components.libreria.LibreriaViewModel
@@ -33,6 +34,8 @@ import com.libreria.alexandria.components.login.LoginPantalla
 import com.libreria.alexandria.components.login.LoginViewModel
 import com.libreria.alexandria.components.perfil.PerfilPantalla
 import com.libreria.alexandria.components.perfil.PerfilPantallaViewModel
+import com.libreria.alexandria.components.resena.ResenaPantalla
+import com.libreria.alexandria.components.resena.ResenaViewModel
 import com.libreria.alexandria.components.splash.SplashPantalla
 import com.libreria.alexandria.components.splash.SplashViewModel
 import com.libreria.alexandria.ui.theme.AlexandriaTheme
@@ -149,8 +152,33 @@ fun AlexandriaNavHost(
                 estado = estado,
                 esMarcado = esMarcado,
                 onRegresar = { navController.popBackStack() },
-                onAlternarMarcador = { detalleViewModel.alternarMarcador() }
+                onAlternarMarcador = { detalleViewModel.alternarMarcador() },
+                onCalificar = {
+                    val st = estado
+                    if (st is LibroDetalleUiState.Completado) {
+                        navController.navigate(
+                            Screen.BookReview.createRoute(
+                                detalleViewModel.libroId,
+                                st.autor,
+                                st.pubFecha,
+                            )
+                        )
+                    }
+                }
             )
+        }
+        composable(
+            route = Screen.BookReview.ROUTE_PATTERN,
+            arguments = listOf(
+                navArgument("pubFecha") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) {
+            val resenaViewModel: ResenaViewModel = hiltViewModel()
+            val resenaEstado by resenaViewModel.uiState.collectAsStateWithLifecycle()
+            ResenaPantalla(uiState = resenaEstado)
         }
         composable(Screen.BookLibrary.route) {
             val libreriaViewModel: LibreriaViewModel = hiltViewModel()
