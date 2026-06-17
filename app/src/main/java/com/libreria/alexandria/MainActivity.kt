@@ -15,15 +15,21 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.libreria.alexandria.components.AlexandriaNavBar
 import com.libreria.alexandria.components.Screen
+import com.libreria.alexandria.components.bottomNavItems
 import com.libreria.alexandria.components.detalle.LibroDetallePantalla
 import com.libreria.alexandria.components.detalle.LibroDetalleViewModel
+import com.libreria.alexandria.components.libreria.LibreriaPantalla
 import com.libreria.alexandria.components.listado.LibroListadoPantalla
 import com.libreria.alexandria.components.listado.LibrosViewModel
 import com.libreria.alexandria.components.login.LoginEstadoUI
 import com.libreria.alexandria.components.login.LoginPantalla
 import com.libreria.alexandria.components.login.LoginViewModel
+import com.libreria.alexandria.components.perfil.PerfilPantalla
+import com.libreria.alexandria.components.perfil.PerfilPantallaViewModel
 import com.libreria.alexandria.components.splash.SplashPantalla
 import com.libreria.alexandria.components.splash.SplashViewModel
 import com.libreria.alexandria.ui.theme.AlexandriaTheme
@@ -36,17 +42,40 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AlexandriaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AlexandriaNavHost(modifier = Modifier.padding(innerPadding))
-                }
+                AlexandriaMainScreen()
             }
         }
     }
 }
 
 @Composable
-fun AlexandriaNavHost(modifier: Modifier = Modifier) {
+fun AlexandriaMainScreen() {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val showBottomBar = currentRoute in bottomNavItems.map { it.route }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            if (showBottomBar) {
+                AlexandriaNavBar(navController = navController)
+            }
+        }
+    ) { innerPadding ->
+        AlexandriaNavHost(
+            navController = navController,
+            modifier = Modifier.padding(innerPadding)
+        )
+    }
+}
+
+@Composable
+fun AlexandriaNavHost(
+    navController: androidx.navigation.NavHostController,
+    modifier: Modifier = Modifier
+) {
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
@@ -112,6 +141,17 @@ fun AlexandriaNavHost(modifier: Modifier = Modifier) {
             LibroDetallePantalla(
                 estado = estado,
                 onRegresar = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.BookLibrary.route) {
+            LibreriaPantalla()
+        }
+        composable(Screen.UsuarioPerfil.route) {
+            val perfilViewModel: PerfilPantallaViewModel = hiltViewModel()
+            val perfilEstado by perfilViewModel.uiState.collectAsStateWithLifecycle()
+            PerfilPantalla(
+                uiState = perfilEstado,
+                onAcercaDeMiChange = { perfilViewModel.actualizarAcercaDeMi(it) }
             )
         }
     }
