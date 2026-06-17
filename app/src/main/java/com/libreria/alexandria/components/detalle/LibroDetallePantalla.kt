@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -55,7 +57,9 @@ private val resenasPlaceholder = listOf(
 @OptIn(ExperimentalGlideComposeApi::class)
 fun LibroDetallePantalla(
     estado: LibroDetalleUiState,
+    esMarcado: Boolean,
     onRegresar: () -> Unit,
+    onAlternarMarcador: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -163,18 +167,31 @@ fun LibroDetallePantalla(
 
         Row(
             modifier = Modifier
-                .clickable(onClick = onRegresar)
+                .fillMaxWidth()
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            Row(
+                modifier = Modifier.clickable(onClick = onRegresar),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Volver",
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Regresar",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "Regresar",
-                style = MaterialTheme.typography.bodyLarge,
+                imageVector = if (esMarcado) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
+                contentDescription = if (esMarcado) "Quitar marcador" else "Agregar marcador",
+                modifier = Modifier.clickable(onClick = onAlternarMarcador),
+                tint = if (esMarcado) MaterialTheme.colorScheme.primary
+                       else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
