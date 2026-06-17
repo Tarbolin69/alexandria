@@ -1,0 +1,80 @@
+package com.libreria.alexandria.data
+
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.FirebaseFirestore
+import com.libreria.alexandria.data.local.PerfilEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class PerfilFirebaseRepositorio @Inject constructor(
+    private val firestore: FirebaseFirestore
+) {
+    private fun perfilDoc(userId: String) = firestore.collection("perfiles").document(userId)
+
+    fun obtenerPerfil(userId: String): Flow<PerfilEntity?> = callbackFlow {
+        val listener = perfilDoc(userId).addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            val perfil = if (snapshot != null && snapshot.exists()) {
+                PerfilEntity(
+                    userId = snapshot.id,
+                    nombre = snapshot.getString("nombre") ?: "",
+                    email = snapshot.getString("email") ?: "",
+                    acercaDeMi = snapshot.getString("acercaDeMi") ?: "",
+                    telefono = snapshot.getString("telefono") ?: "",
+                    sitioWeb = snapshot.getString("sitioWeb") ?: ""
+                )
+            } else {
+                null
+            }
+            trySend(perfil)
+        }
+        awaitClose { listener.remove() }
+    }
+
+    suspend fun guardarPerfil(perfil: PerfilEntity) {
+        try {
+            withContext(Dispatchers.IO) {
+                Tasks.await(
+                    perfilDoc(perfil.userId).set(
+                        mapOf(
+                            "nombre" to perfil.nombre,
+                            "email" to perfil.email,
+                            "acercaDeMi" to perfil.acercaDeMi,
+                            "telefono" to perfil.telefono,
+                            "sitioWeb" to perfil.sitioWeb
+                        )
+                    )
+                )
+            }
+        } catch (_: Exception) { }
+    }
+
+    suspend fun inicializarSiNoExiste(userId: String, nombre: String, email: String) {
+        try {
+            withContext(Dispatchers.IO) {
+                val doc = Tasks.await(perfilDoc(userId).get())
+                if (!doc.exists()) {
+                    Tasks.await(
+                        perfilDoc(userId).set(
+                            mapOf(
+                                "nombre" to nombre,
+                                "email" to email,
+                                "acercaDeMi" to "",
+                                "telefono" to "",
+                                "sitioWeb" to ""
+                            )
+                        )
+                    )
+                }
+            }
+        } catch (_: Exception) { }
+    }
+}

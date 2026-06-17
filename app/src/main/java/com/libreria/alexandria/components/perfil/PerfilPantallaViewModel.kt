@@ -3,6 +3,7 @@ package com.libreria.alexandria.components.perfil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.libreria.alexandria.data.AuthRepositorio
+import com.libreria.alexandria.data.PerfilFirebaseRepositorio
 import com.libreria.alexandria.data.PerfilRepositorio
 import com.libreria.alexandria.data.PerfilUsuarioInfo
 import com.libreria.alexandria.data.local.PerfilEntity
@@ -27,7 +28,8 @@ data class PerfilUiState(
 @HiltViewModel
 class PerfilPantallaViewModel @Inject constructor(
     authRepositorio: AuthRepositorio,
-    private val perfilRepositorio: PerfilRepositorio
+    private val perfilRepositorio: PerfilRepositorio,
+    private val perfilFirebaseRepositorio: PerfilFirebaseRepositorio
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PerfilUiState())
     val uiState: StateFlow<PerfilUiState> = _uiState.asStateFlow()
@@ -41,23 +43,37 @@ class PerfilPantallaViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            perfilRepositorio.obtenerPerfil(userId).collect { perfil ->
-                if (perfil != null) {
-                    _uiState.update {
-                        it.copy(
-                            acercaDeMi = perfil.acercaDeMi,
-                            telefono = perfil.telefono,
-                            sitioWeb = perfil.sitioWeb,
-                            email = perfil.email
-                        )
+            try {
+                perfilFirebaseRepositorio.inicializarSiNoExiste(
+                    userId = userId,
+                    nombre = info?.nombre ?: "",
+                    email = info?.email ?: ""
+                )
+
+                perfilFirebaseRepositorio.obtenerPerfil(userId).collect { perfil ->
+                    if (perfil != null) {
+                        _uiState.update {
+                            it.copy(
+                                acercaDeMi = perfil.acercaDeMi,
+                                telefono = perfil.telefono,
+                                sitioWeb = perfil.sitioWeb,
+                                email = perfil.email
+                            )
+                        }
+                        perfilRepositorio.guardarPerfil(perfil)
                     }
-                } else {
-                    _uiState.update {
-                        it.copy(
-                            email = info?.email ?: "",
-                            telefono = "",
-                            sitioWeb = ""
-                        )
+                }
+            } catch (_: Exception) {
+                perfilRepositorio.obtenerPerfil(userId).collect { perfil ->
+                    if (perfil != null) {
+                        _uiState.update {
+                            it.copy(
+                                acercaDeMi = perfil.acercaDeMi,
+                                telefono = perfil.telefono,
+                                sitioWeb = perfil.sitioWeb,
+                                email = perfil.email
+                            )
+                        }
                     }
                 }
             }
@@ -71,16 +87,16 @@ class PerfilPantallaViewModel @Inject constructor(
     fun guardar() {
         val state = _uiState.value
         viewModelScope.launch {
-            perfilRepositorio.guardarPerfil(
-                PerfilEntity(
-                    userId = state.userId,
-                    nombre = state.usuarioInfo?.nombre ?: "",
-                    email = state.email,
-                    acercaDeMi = state.acercaDeMi,
-                    telefono = state.telefono,
-                    sitioWeb = state.sitioWeb
-                )
+            val perfil = PerfilEntity(
+                userId = state.userId,
+                nombre = state.usuarioInfo?.nombre ?: "",
+                email = state.email,
+                acercaDeMi = state.acercaDeMi,
+                telefono = state.telefono,
+                sitioWeb = state.sitioWeb
             )
+            perfilFirebaseRepositorio.guardarPerfil(perfil)
+            perfilRepositorio.guardarPerfil(perfil)
             _uiState.update { it.copy(estaEditando = false) }
         }
     }

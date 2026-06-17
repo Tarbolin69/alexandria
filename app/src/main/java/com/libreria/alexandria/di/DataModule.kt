@@ -9,9 +9,11 @@ import com.libreria.alexandria.data.LibroRemoteDataSource
 import com.libreria.alexandria.data.LibroRepositorio
 import com.libreria.alexandria.data.LibroRepositorioImpl
 import com.libreria.alexandria.data.OpenLibraryAPI
+import com.libreria.alexandria.data.PerfilFirebaseRepositorio
 import com.libreria.alexandria.data.PerfilRepositorio
 import com.libreria.alexandria.data.local.AppDatabase
 import com.libreria.alexandria.data.local.PerfilDao
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -63,4 +65,8 @@ object DataModule {
 
     @Provides
     fun providePerfilDao(database: AppDatabase): PerfilDao = database.perfilDao()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 }
