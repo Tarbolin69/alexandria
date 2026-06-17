@@ -18,8 +18,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -78,9 +78,6 @@ fun LibroListadoPantalla(
     onBuscarPorGenero: (String) -> Unit,
     onCargarSiguientePagina: () -> Unit,
     onNavigateToDetail: (String, String) -> Unit,
-    // Parte temporal de la pantalla para testear
-    // cierre de sesión.
-    onCerrarSesion: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listaEstado = rememberLazyListState()
@@ -104,17 +101,12 @@ fun LibroListadoPantalla(
             onValueChange = onQueryChange,
             label = { Text("Buscar libros...") },
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = { onSearch(query) }
             ),
-            // El botón de cierre de sesión, que es una X
-            leadingIcon = {
-                IconButton(onClick = onCerrarSesion) {
-                    Icon(Icons.Default.Close, contentDescription = "Cerrar sesión")
-                }
-            },
             trailingIcon = {
                 IconButton(onClick = { onSearch(query) }) {
                     Icon(Icons.Default.Search, contentDescription = "Buscar")

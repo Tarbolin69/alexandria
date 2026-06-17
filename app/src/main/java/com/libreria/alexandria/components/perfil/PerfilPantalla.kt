@@ -19,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +43,7 @@ fun PerfilPantalla(
     onEditar: () -> Unit,
     onGuardar: () -> Unit,
     onCancelarEdicion: () -> Unit,
+    onCerrarSesion: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val usuarioInfo = uiState.usuarioInfo
@@ -180,6 +182,13 @@ fun PerfilPantalla(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Editar")
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = onCerrarSesion,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cerrar sesion")
             }
         }
     }
