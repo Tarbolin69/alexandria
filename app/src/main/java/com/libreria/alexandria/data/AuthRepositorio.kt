@@ -11,4 +11,5 @@ interface AuthRepositorio {
     suspend fun iniciarSesionConGoogle(idToken: String): Result<Unit>
     fun cerrarSesion()
     fun obtenerUsuarioInfo(): PerfilUsuarioInfo?
+    fun obtenerUsuarioId(): String
 }

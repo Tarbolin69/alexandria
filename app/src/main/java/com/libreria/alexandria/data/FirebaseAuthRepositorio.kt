@@ -33,4 +33,6 @@ class FirebaseAuthRepositorio : AuthRepositorio {
             fotoUrl = user.photoUrl?.toString()
         )
     }
+
+    override fun obtenerUsuarioId(): String = auth.currentUser?.uid ?: ""
 }

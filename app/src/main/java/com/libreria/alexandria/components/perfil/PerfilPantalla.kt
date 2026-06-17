@@ -10,19 +10,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,9 +31,16 @@ import androidx.compose.ui.unit.dp
 fun PerfilPantalla(
     uiState: PerfilUiState,
     onAcercaDeMiChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onTelefonoChange: (String) -> Unit,
+    onSitioWebChange: (String) -> Unit,
+    onEditar: () -> Unit,
+    onGuardar: () -> Unit,
+    onCancelarEdicion: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val usuarioInfo = uiState.usuarioInfo
+    val estaEditando = uiState.estaEditando
 
     Column(
         modifier = modifier
@@ -78,16 +84,25 @@ fun PerfilPantalla(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = uiState.acercaDeMi,
-            onValueChange = onAcercaDeMiChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
-            placeholder = {
-                Text("Escribí algo...")
-            }
-        )
+        if (estaEditando) {
+            OutlinedTextField(
+                value = uiState.acercaDeMi,
+                onValueChange = onAcercaDeMiChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+                placeholder = { Text("Escribe algo sobre ti...") }
+            )
+        } else {
+            Text(
+                text = uiState.acercaDeMi.ifEmpty { "Sin información" },
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (uiState.acercaDeMi.isEmpty())
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                else
+                    MaterialTheme.colorScheme.onSurface
+            )
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -96,25 +111,71 @@ fun PerfilPantalla(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Contactos",
+            text = "Información de la cuenta",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (usuarioInfo != null) {
-            CampoInfo(label = "Email", valor = usuarioInfo.email)
+        CampoInfoEditable(
+            label = "Email",
+            valor = uiState.email,
+            estaEditando = estaEditando,
+            placeholder = "ejemplo@mail.com",
+            onValueChange = onEmailChange
+        )
+        CampoInfoEditable(
+            label = "Teléfono",
+            valor = uiState.telefono,
+            estaEditando = estaEditando,
+            placeholder = "+52 123 456 7890",
+            onValueChange = onTelefonoChange
+        )
+        CampoInfoEditable(
+            label = "Sitio",
+            valor = uiState.sitioWeb,
+            estaEditando = estaEditando,
+            placeholder = "www.ejemplo.com",
+            onValueChange = onSitioWebChange
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        if (estaEditando) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = onCancelarEdicion,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Cancelar")
+                }
+                Spacer(modifier = Modifier.size(12.dp))
+                Button(
+                    onClick = onGuardar,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Guardar")
+                }
+            }
+        } else {
+            Button(
+                onClick = onEditar,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Editar")
+            }
         }
-        CampoInfo(label = "Teléfono", valor = "+54 9 2252 49-0295")
-        CampoInfo(label = "Sitio", valor = "www.solcaronte.xyz")
     }
 }
 
 @Composable
-private fun CampoInfo(
+private fun CampoInfoEditable(
     label: String,
     valor: String,
+    estaEditando: Boolean,
+    placeholder: String,
+    onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(bottom = 16.dp)) {
@@ -124,9 +185,23 @@ private fun CampoInfo(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = valor,
-            style = MaterialTheme.typography.bodyLarge
-        )
+        if (estaEditando) {
+            OutlinedTextField(
+                value = valor,
+                onValueChange = onValueChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(placeholder) },
+                singleLine = true
+            )
+        } else {
+            Text(
+                text = valor.ifEmpty { "Sin información" },
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (valor.isEmpty())
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                else
+                    MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
