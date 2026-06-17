@@ -17,4 +17,5 @@ sealed class Screen(val route: String) {
     }
     object BookReview: Screen("book_review_screen")
     object BookLibrary: Screen("book_library_screen")
+    object UsuarioPerfil: Screen("usuario_perfil_screen")
 }
