@@ -178,7 +178,10 @@ fun AlexandriaNavHost(
         ) {
             val resenaViewModel: ResenaViewModel = hiltViewModel()
             val resenaEstado by resenaViewModel.uiState.collectAsStateWithLifecycle()
-            ResenaPantalla(uiState = resenaEstado)
+            ResenaPantalla(
+                uiState = resenaEstado,
+                onRegresar = { navController.popBackStack() },
+            )
         }
         composable(Screen.BookLibrary.route) {
             val libreriaViewModel: LibreriaViewModel = hiltViewModel()
