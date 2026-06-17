@@ -127,11 +127,6 @@ fun AlexandriaNavHost(
                 onCargarSiguientePagina = { listadoViewModel.cargarSiguientePagina() },
                 onNavigateToDetail = { libroId, autor ->
                     navController.navigate(Screen.BookDetail.createRoute(libroId, autor))
-                },
-                onCerrarSesion = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
                 }
             )
         }
@@ -151,7 +146,18 @@ fun AlexandriaNavHost(
             val perfilEstado by perfilViewModel.uiState.collectAsStateWithLifecycle()
             PerfilPantalla(
                 uiState = perfilEstado,
-                onAcercaDeMiChange = { perfilViewModel.actualizarAcercaDeMi(it) }
+                onAcercaDeMiChange = { perfilViewModel.actualizarAcercaDeMi(it) },
+                onEmailChange = { perfilViewModel.actualizarEmail(it) },
+                onTelefonoChange = { perfilViewModel.actualizarTelefono(it) },
+                onSitioWebChange = { perfilViewModel.actualizarSitioWeb(it) },
+                onEditar = { perfilViewModel.iniciarEdicion() },
+                onGuardar = { perfilViewModel.guardar() },
+                onCancelarEdicion = { perfilViewModel.cancelarEdicion() },
+                onCerrarSesion = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
     }
