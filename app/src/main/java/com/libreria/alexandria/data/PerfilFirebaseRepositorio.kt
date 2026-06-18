@@ -12,12 +12,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PerfilFirebaseRepositorio @Inject constructor(
+open class PerfilFirebaseRepositorio @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
     private fun perfilDoc(userId: String) = firestore.collection("perfiles").document(userId)
 
-    fun obtenerPerfil(userId: String): Flow<PerfilEntity?> = callbackFlow {
+    open fun obtenerPerfil(userId: String): Flow<PerfilEntity?> = callbackFlow {
         val listener = perfilDoc(userId).addSnapshotListener { snapshot, error ->
             if (error != null) {
                 return@addSnapshotListener
@@ -39,7 +39,7 @@ class PerfilFirebaseRepositorio @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-    suspend fun guardarPerfil(perfil: PerfilEntity) {
+    open suspend fun guardarPerfil(perfil: PerfilEntity) {
         try {
             withContext(Dispatchers.IO) {
                 Tasks.await(
@@ -57,7 +57,7 @@ class PerfilFirebaseRepositorio @Inject constructor(
         } catch (_: Exception) { }
     }
 
-    suspend fun inicializarSiNoExiste(userId: String, nombre: String, email: String) {
+    open suspend fun inicializarSiNoExiste(userId: String, nombre: String, email: String) {
         try {
             withContext(Dispatchers.IO) {
                 val doc = Tasks.await(perfilDoc(userId).get())
