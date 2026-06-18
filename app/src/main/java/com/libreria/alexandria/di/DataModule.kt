@@ -47,7 +47,7 @@ object DataModule {
             .callTimeout(30, TimeUnit.SECONDS)
             .build()
         return Retrofit.Builder()
-            .baseUrl("https://openlibrary.org/")
+            .baseUrl(BASE_URL_OPEN_LIBRARY)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
@@ -71,7 +71,7 @@ object DataModule {
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "alexandria.db")
+        Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
             .fallbackToDestructiveMigration(false)
             .build()
 
@@ -86,4 +86,7 @@ object DataModule {
     @Provides
     @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    private const val BASE_URL_OPEN_LIBRARY = "https://openlibrary.org/"
+    private const val DB_NAME = "alexandria.db"
 }

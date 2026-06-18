@@ -2,9 +2,12 @@ package com.libreria.alexandria.components
 
 import com.libreria.alexandria.components.libreria.LibreriaUiState
 import com.libreria.alexandria.components.libreria.LibreriaViewModel
+import com.libreria.alexandria.data.DeepseekApiKeyStorage
+import com.libreria.alexandria.data.DeepseekService
 import com.libreria.alexandria.data.LibroGuardadoRepositorio
 import com.libreria.alexandria.data.local.LibroGuardadoDao
 import com.libreria.alexandria.data.local.LibroGuardadoEntity
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +24,9 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LibreriaViewModelTest {
+
+    private val apiKeyStorage = mockk<DeepseekApiKeyStorage>(relaxed = true)
+    private val deepseekService = mockk<DeepseekService>(relaxed = true)
 
     @Before
     fun setup() { Dispatchers.setMain(UnconfinedTestDispatcher()) }
@@ -40,7 +46,7 @@ class LibreriaViewModelTest {
         val repo = object : LibroGuardadoRepositorio(dao) {
             override fun obtenerTodos(): Flow<List<LibroGuardadoEntity>> = flowOf(saved)
         }
-        val vm = LibreriaViewModel(repo)
+        val vm = LibreriaViewModel(repo, apiKeyStorage, deepseekService)
         assertEquals("TLOTR", (vm.uiState.value as LibreriaUiState.Completado).libros[0].titulo)
     }
 
@@ -55,7 +61,7 @@ class LibreriaViewModelTest {
         val repo = object : LibroGuardadoRepositorio(dao) {
             override fun obtenerTodos(): Flow<List<LibroGuardadoEntity>> = flowOf(emptyList())
         }
-        val vm = LibreriaViewModel(repo)
+        val vm = LibreriaViewModel(repo, apiKeyStorage, deepseekService)
         assertTrue((vm.uiState.value as LibreriaUiState.Completado).libros.isEmpty())
     }
 }

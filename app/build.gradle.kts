@@ -9,8 +9,8 @@ plugins {
 android {
     namespace = "com.libreria.alexandria"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
+        version = release(37) {
+            minorApiLevel = 0
         }
     }
 
@@ -39,7 +39,6 @@ android {
     }
     buildFeatures {
         compose = true
-        viewBinding = true
     }
 }
 
@@ -53,7 +52,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.runtime.ktx)
@@ -75,19 +73,13 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.androidx.activity.compose.v193)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material.icons.core)
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
     implementation(libs.moshi.kotlin)
     implementation(libs.glide.compose)
-    implementation(libs.androidx.paging.runtime.ktx)
-    implementation(libs.androidx.paging.compose)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
@@ -96,4 +88,11 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+    implementation(libs.androidx.security.crypto)
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.0")
+    }
 }

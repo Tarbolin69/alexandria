@@ -24,11 +24,12 @@ data class PerfilUiState(
     val email: String = "",
     val estaEditando: Boolean = false,
     val userId: String = "",
+    val mostrarDialogoCerrarSesion: Boolean = false,
 )
 
 @HiltViewModel
 class PerfilPantallaViewModel @Inject constructor(
-    authRepositorio: AuthRepositorio,
+    private val authRepositorio: AuthRepositorio,
     private val perfilRepositorio: PerfilRepositorio,
     private val perfilFirebaseRepositorio: PerfilFirebaseRepositorio
 ) : ViewModel() {
@@ -102,6 +103,18 @@ class PerfilPantallaViewModel @Inject constructor(
             perfilRepositorio.guardarPerfil(perfil)
             _uiState.update { it.copy(estaEditando = false) }
         }
+    }
+
+    fun cerrarSesion() {
+        authRepositorio.cerrarSesion()
+    }
+
+    fun mostrarDialogoCerrarSesion() {
+        _uiState.update { it.copy(mostrarDialogoCerrarSesion = true) }
+    }
+
+    fun ocultarDialogoCerrarSesion() {
+        _uiState.update { it.copy(mostrarDialogoCerrarSesion = false) }
     }
 
     fun cancelarEdicion() {

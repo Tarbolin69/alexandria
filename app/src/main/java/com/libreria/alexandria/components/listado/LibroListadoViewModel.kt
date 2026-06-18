@@ -18,7 +18,7 @@ sealed interface LibroEstadoUI {
 }
 
 @HiltViewModel
-class LibrosViewModel @Inject constructor(
+class LibroListadoViewModel @Inject constructor(
     private val repository: LibroRepositorio
 ) : ViewModel() {
     // Los dos modos de búsqueda disponibles
@@ -28,7 +28,7 @@ class LibrosViewModel @Inject constructor(
         data class Genero(val subject: String) : ModoBusqueda
     }
 
-    private val _uiState = MutableStateFlow<LibroEstadoUI>(LibroEstadoUI.Error(""))
+    private val _uiState = MutableStateFlow<LibroEstadoUI>(LibroEstadoUI.Cargando)
     val uiState: StateFlow<LibroEstadoUI> = _uiState.asStateFlow()
 
     private val _generoSeleccionado = MutableStateFlow<String?>(null)

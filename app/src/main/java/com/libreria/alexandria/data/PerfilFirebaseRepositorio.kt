@@ -15,7 +15,11 @@ import javax.inject.Singleton
 open class PerfilFirebaseRepositorio @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
-    private fun perfilDoc(userId: String) = firestore.collection("perfiles").document(userId)
+    private fun perfilDoc(userId: String) = firestore.collection(COLECCION_PERFILES).document(userId)
+
+    companion object {
+        private const val COLECCION_PERFILES = "perfiles"
+    }
 
     open fun obtenerPerfil(userId: String): Flow<PerfilEntity?> = callbackFlow {
         val listener = perfilDoc(userId).addSnapshotListener { snapshot, error ->
@@ -43,7 +47,7 @@ open class PerfilFirebaseRepositorio @Inject constructor(
         return try {
             withContext(Dispatchers.IO) {
                 Tasks.await(
-                    perfilDoc(perfil.userId).set(
+                    perfilDoc(perfil.userId).update(
                         mapOf(
                             "nombre" to perfil.nombre,
                             "email" to perfil.email,

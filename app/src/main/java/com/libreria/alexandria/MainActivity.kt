@@ -29,7 +29,7 @@ import com.libreria.alexandria.components.detalle.LibroDetalleViewModel
 import com.libreria.alexandria.components.libreria.LibreriaPantalla
 import com.libreria.alexandria.components.libreria.LibreriaViewModel
 import com.libreria.alexandria.components.listado.LibroListadoPantalla
-import com.libreria.alexandria.components.listado.LibrosViewModel
+import com.libreria.alexandria.components.listado.LibroListadoViewModel
 import com.libreria.alexandria.components.login.LoginEstadoUI
 import com.libreria.alexandria.components.login.LoginPantalla
 import com.libreria.alexandria.components.login.LoginViewModel
@@ -120,7 +120,7 @@ fun AlexandriaNavHost(
             )
         }
         composable(Screen.BookList.route) {
-            val listadoViewModel: LibrosViewModel = hiltViewModel()
+            val listadoViewModel: LibroListadoViewModel = hiltViewModel()
             val uiState by listadoViewModel.uiState.collectAsStateWithLifecycle()
             val generoElegido by listadoViewModel.selectedSubject.collectAsStateWithLifecycle()
             val query by listadoViewModel.query.collectAsStateWithLifecycle()
@@ -223,10 +223,13 @@ fun AlexandriaNavHost(
                 onGuardar = { perfilViewModel.guardar() },
                 onCancelarEdicion = { perfilViewModel.cancelarEdicion() },
                 onCerrarSesion = {
+                    perfilViewModel.cerrarSesion()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
-                }
+                },
+                onMostrarCerrarSesion = { perfilViewModel.mostrarDialogoCerrarSesion() },
+                onOcultarDialogoCerrarSesion = { perfilViewModel.ocultarDialogoCerrarSesion() }
             )
         }
     }

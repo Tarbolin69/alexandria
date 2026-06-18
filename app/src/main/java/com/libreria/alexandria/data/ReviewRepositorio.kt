@@ -1,5 +1,6 @@
 package com.libreria.alexandria.data
 
+import android.util.Log
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -15,7 +16,12 @@ import javax.inject.Singleton
 open class ReviewRepositorio @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
-    private fun coleccionCriticas() = firestore.collection("criticas")
+    private fun coleccionCriticas() = firestore.collection(COLECCION_CRITICAS)
+
+    companion object {
+        private const val TAG = "ReviewRepositorio"
+        private const val COLECCION_CRITICAS = "criticas"
+    }
 
     private fun documentoId(bookId: String, userId: String) = "${bookId}_$userId"
 
@@ -50,7 +56,8 @@ open class ReviewRepositorio @Inject constructor(
                 .addSnapshotListener { snapshot, _ ->
                     trySend(snapshot != null && snapshot.exists())
                 }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "Error listening for yaCalificado", e)
             trySend(false)
         }
         awaitClose { listener?.remove() }
@@ -64,6 +71,7 @@ open class ReviewRepositorio @Inject constructor(
                 .orderBy("fecha", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
+                        Log.e(TAG, "Snapshot error for book $bookId", error)
                         return@addSnapshotListener
                     }
                     val reviews = snapshot?.documents?.mapNotNull { doc ->
@@ -79,7 +87,8 @@ open class ReviewRepositorio @Inject constructor(
                     } ?: emptyList()
                     trySend(reviews)
                 }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "Error listening for reviews", e)
             trySend(emptyList())
         }
         awaitClose { listener?.remove() }

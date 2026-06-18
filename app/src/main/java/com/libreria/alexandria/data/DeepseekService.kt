@@ -48,6 +48,10 @@ class DeepseekService @Inject constructor(
 
     private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
 
+    companion object {
+        private const val DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
+    }
+
     suspend fun getRecommendations(libraryBooks: List<LibroGuardadoEntity>): Result<String> {
         return withContext(Dispatchers.IO) {
             try {
@@ -78,7 +82,7 @@ class DeepseekService @Inject constructor(
                 val json = adapter.toJson(requestBody)
 
                 val request = Request.Builder()
-                    .url("https://api.deepseek.com/v1/chat/completions")
+                    .url(DEEPSEEK_API_URL)
                     .addHeader("Authorization", "Bearer $apiKey")
                     .addHeader("Content-Type", "application/json")
                     .post(json.toRequestBody(jsonMediaType))

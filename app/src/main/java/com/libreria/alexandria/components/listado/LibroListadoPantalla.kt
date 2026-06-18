@@ -124,7 +124,6 @@ fun LibroListadoPantalla(
                 FilterChip(
                     selected = generos[genero] == generoElegido,
                     onClick = {
-                        onQueryChange("")
                         onBuscarPorGenero(generos[genero] ?: genero)
                     },
                     label = { Text(genero) }

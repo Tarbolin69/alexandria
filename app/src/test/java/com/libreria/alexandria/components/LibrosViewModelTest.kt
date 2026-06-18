@@ -1,7 +1,7 @@
 package com.libreria.alexandria.components
 
 import com.libreria.alexandria.components.listado.LibroEstadoUI
-import com.libreria.alexandria.components.listado.LibrosViewModel
+import com.libreria.alexandria.components.listado.LibroListadoViewModel
 import com.libreria.alexandria.data.Libro
 import com.libreria.alexandria.data.LibroDetalleInfo
 import com.libreria.alexandria.data.LibroRepositorio
@@ -37,7 +37,7 @@ class LibrosViewModelTest {
             override suspend fun buscarPorGenero(subject: String, offset: Int, limit: Int): Result<List<Libro>> = Result.success(emptyList())
             override suspend fun obtenerInfoDetalle(libroId: String, autor: String): Result<LibroDetalleInfo> = Result.failure(Exception("n/a"))
         }
-        val vm = LibrosViewModel(repo)
+        val vm = LibroListadoViewModel(repo)
         vm.buscarLibros("Tolkien")
         assertTrue(vm.uiState.value is LibroEstadoUI.Completado)
     }
@@ -49,7 +49,7 @@ class LibrosViewModelTest {
             override suspend fun buscarPorGenero(subject: String, offset: Int, limit: Int): Result<List<Libro>> = Result.success(sampleBooks)
             override suspend fun obtenerInfoDetalle(libroId: String, autor: String): Result<LibroDetalleInfo> = Result.failure(Exception("n/a"))
         }
-        val vm = LibrosViewModel(repo)
+        val vm = LibroListadoViewModel(repo)
         vm.actualizarQuery("text")
         vm.buscarPorGenero("Fantasy")
         assertEquals("Fantasy", vm.selectedSubject.value)
@@ -63,7 +63,7 @@ class LibrosViewModelTest {
             override suspend fun buscarPorGenero(subject: String, offset: Int, limit: Int): Result<List<Libro>> = Result.success(emptyList())
             override suspend fun obtenerInfoDetalle(libroId: String, autor: String): Result<LibroDetalleInfo> = Result.failure(Exception("n/a"))
         }
-        val vm = LibrosViewModel(repo)
+        val vm = LibroListadoViewModel(repo)
         vm.buscarLibros("x")
         assertTrue(vm.uiState.value is LibroEstadoUI.Error)
     }
@@ -75,7 +75,7 @@ class LibrosViewModelTest {
             override suspend fun buscarPorGenero(subject: String, offset: Int, limit: Int): Result<List<Libro>> = Result.success(emptyList())
             override suspend fun obtenerInfoDetalle(libroId: String, autor: String): Result<LibroDetalleInfo> = Result.failure(Exception("n/a"))
         }
-        val vm = LibrosViewModel(repo)
+        val vm = LibroListadoViewModel(repo)
         val initial = vm.uiState.value
         vm.buscarLibros("   ")
         assertEquals(initial, vm.uiState.value)
@@ -88,7 +88,7 @@ class LibrosViewModelTest {
             override suspend fun buscarPorGenero(subject: String, offset: Int, limit: Int): Result<List<Libro>> = Result.success(emptyList())
             override suspend fun obtenerInfoDetalle(libroId: String, autor: String): Result<LibroDetalleInfo> = Result.failure(Exception("n/a"))
         }
-        val vm = LibrosViewModel(repo)
+        val vm = LibroListadoViewModel(repo)
         vm.buscarLibros("nope")
         assertTrue((vm.uiState.value as LibroEstadoUI.Completado).books.isEmpty())
     }

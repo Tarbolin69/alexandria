@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,10 +46,33 @@ fun PerfilPantalla(
     onGuardar: () -> Unit,
     onCancelarEdicion: () -> Unit,
     onCerrarSesion: () -> Unit,
+    onMostrarCerrarSesion: () -> Unit,
+    onOcultarDialogoCerrarSesion: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val usuarioInfo = uiState.usuarioInfo
     val estaEditando = uiState.estaEditando
+
+    if (uiState.mostrarDialogoCerrarSesion) {
+        AlertDialog(
+            onDismissRequest = onOcultarDialogoCerrarSesion,
+            title = { Text("Cerrar sesión") },
+            text = { Text("¿Estás seguro de que querés cerrar sesión?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onOcultarDialogoCerrarSesion()
+                    onCerrarSesion()
+                }) {
+                    Text("Cerrar sesión")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onOcultarDialogoCerrarSesion) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 
     Column(
         modifier = modifier
@@ -185,7 +210,7 @@ fun PerfilPantalla(
             }
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedButton(
-                onClick = onCerrarSesion,
+                onClick = onMostrarCerrarSesion,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Cerrar sesión")
