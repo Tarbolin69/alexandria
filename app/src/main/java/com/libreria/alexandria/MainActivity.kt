@@ -195,11 +195,19 @@ fun AlexandriaNavHost(
         composable(Screen.BookLibrary.route) {
             val libreriaViewModel: LibreriaViewModel = hiltViewModel()
             val libreriaEstado by libreriaViewModel.uiState.collectAsStateWithLifecycle()
+            val aiDialogState by libreriaViewModel.aiDialogState.collectAsStateWithLifecycle()
+            val apiKeyInput by libreriaViewModel.apiKeyInput.collectAsStateWithLifecycle()
             LibreriaPantalla(
                 uiState = libreriaEstado,
+                aiDialogState = aiDialogState,
+                apiKeyInput = apiKeyInput,
                 onNavigateToDetail = { libroId, autor, pubFecha ->
                     navController.navigate(Screen.BookDetail.createRoute(libroId, autor, pubFecha))
-                }
+                },
+                onRobotClick = { libreriaViewModel.abrirDialogoAI() },
+                onCerrarDialogoAI = { libreriaViewModel.cerrarDialogoAI() },
+                onApiKeyInputChange = { libreriaViewModel.actualizarApiKeyInput(it) },
+                onGuardarApiKey = { libreriaViewModel.guardarApiKey() }
             )
         }
         composable(Screen.UsuarioPerfil.route) {
