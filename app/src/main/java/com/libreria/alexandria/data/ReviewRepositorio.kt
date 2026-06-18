@@ -71,6 +71,7 @@ open class ReviewRepositorio @Inject constructor(
                         val puntuacion = doc.getLong("puntuacion")?.toInt() ?: return@mapNotNull null
                         val texto = doc.getString("texto") ?: ""
                         Review(
+                            id = doc.id,
                             usuario = usuario,
                             puntuacion = puntuacion,
                             texto = texto,

@@ -39,7 +39,7 @@ class PerfilPantallaViewModelTest {
             override fun isUsuarioAutenticado() = true
             override suspend fun iniciarSesionConGoogle(idToken: String): Result<Unit> = Result.success(Unit)
             override fun cerrarSesion() {}
-            override fun obtenerUsuarioInfo(): PerfilUsuarioInfo? = PerfilUsuarioInfo("John", "j@m.com", null)
+            override fun obtenerUsuarioInfo(): PerfilUsuarioInfo = PerfilUsuarioInfo("John", "j@m.com", null)
             override fun obtenerUsuarioId() = "user1"
         },
         object : PerfilRepositorio(
@@ -50,8 +50,8 @@ class PerfilPantallaViewModelTest {
         ) {},
         object : PerfilFirebaseRepositorio(firestoreMock) {
             override fun obtenerPerfil(userId: String) = flowOf(null)
-            override suspend fun guardarPerfil(perfil: PerfilEntity) {}
-            override suspend fun inicializarSiNoExiste(userId: String, nombre: String, email: String) {}
+            override suspend fun guardarPerfil(perfil: PerfilEntity) = Result.success(Unit)
+            override suspend fun inicializarSiNoExiste(userId: String, nombre: String, email: String) = Result.success(Unit)
         },
     )
 
