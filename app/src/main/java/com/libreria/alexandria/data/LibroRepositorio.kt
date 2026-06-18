@@ -15,6 +15,7 @@ class LibroRepositorioImpl(private val remoteDataSource: LibroRemoteDataSource) 
             val libros = remoteDataSource.buscarLibros(query, page, limit)
             Result.success(libros)
         } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
             Result.failure(e)
         }
     }
@@ -24,6 +25,7 @@ class LibroRepositorioImpl(private val remoteDataSource: LibroRemoteDataSource) 
             val libros = remoteDataSource.buscarPorGenero(subject, offset, limit)
             Result.success(libros)
         } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
             Result.failure(e)
         }
     }
@@ -33,6 +35,7 @@ class LibroRepositorioImpl(private val remoteDataSource: LibroRemoteDataSource) 
             val info = remoteDataSource.obtenerInfoDetalle(libroId, autor)
             Result.success(info)
         } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
             Result.failure(e)
         }
     }

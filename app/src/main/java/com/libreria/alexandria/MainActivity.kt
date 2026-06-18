@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,7 +61,8 @@ fun AlexandriaMainScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val showBottomBar = currentRoute in bottomNavItems.map { it.route }
+    val bottomNavRoutes = remember { bottomNavItems.map { it.route }.toSet() }
+    val showBottomBar = currentRoute in bottomNavRoutes
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -106,7 +108,7 @@ fun AlexandriaNavHost(
             LaunchedEffect(loginEstado) {
                 if (loginEstado is LoginEstadoUI.Autenticado) {
                     navController.navigate(Screen.BookList.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
+                        popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 }
             }

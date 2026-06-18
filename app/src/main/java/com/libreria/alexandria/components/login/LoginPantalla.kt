@@ -48,7 +48,28 @@ fun LoginPantalla(
     val contexto = LocalContext.current
     val scope = rememberCoroutineScope()
     val credentialManager = remember { CredentialManager.create(contexto) }
-    // Misma imagen que el SplashScreen
+
+    val onSignInClick = remember(scope, credentialManager, contexto, onAutenticarConGoogle, onEstablecerError) {
+        {
+            intentarGoogleSignIn(
+                scope, credentialManager, contexto,
+                onToken = { onAutenticarConGoogle(it) },
+                onError = { onEstablecerError(it) },
+                soloCuentasExistentes = true
+            )
+        }
+    }
+    val onSignUpClick = remember(scope, credentialManager, contexto, onAutenticarConGoogle, onEstablecerError) {
+        {
+            intentarGoogleSignIn(
+                scope, credentialManager, contexto,
+                onToken = { onAutenticarConGoogle(it) },
+                onError = { onEstablecerError(it) },
+                soloCuentasExistentes = false
+            )
+        }
+    }
+
     val imagenVector: Painter = painterResource(R.drawable.nega_libro)
 
     Box(
@@ -96,17 +117,7 @@ fun LoginPantalla(
 
             BotonGoogle(
                 texto = "Iniciar sesión con Google",
-                onClick = {
-                    intentarGoogleSignIn(
-                        scope, credentialManager, contexto,
-                        onToken = { onAutenticarConGoogle(it) },
-                        onError = { onEstablecerError(it) },
-                        soloCuentasExistentes = true
-                    )
-                },
-                // Esto es para evitar que alguien apreté el
-                // botón de login/signup cuando la app está
-                // intentando autenticar la cuenta de Google.
+                onClick = onSignInClick,
                 enabled = estado !is LoginEstadoUI.Cargando
             )
 
@@ -115,14 +126,7 @@ fun LoginPantalla(
             BotonGoogle(
                 texto = "Registrarse con Google",
                 outlined = true,
-                onClick = {
-                    intentarGoogleSignIn(
-                        scope, credentialManager, contexto,
-                        onToken = { onAutenticarConGoogle(it) },
-                        onError = { onEstablecerError(it) },
-                        soloCuentasExistentes = false
-                    )
-                },
+                onClick = onSignUpClick,
                 enabled = estado !is LoginEstadoUI.Cargando
             )
         }

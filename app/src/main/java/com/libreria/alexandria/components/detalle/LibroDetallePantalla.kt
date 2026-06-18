@@ -28,6 +28,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -117,7 +120,9 @@ fun LibroDetallePantalla(
                                 )
                                 Spacer(modifier = Modifier.height(6.dp))
                                 if (criticas.isNotEmpty()) {
-                                    val promedio = criticas.map { it.puntuacion }.average().toInt()
+                                    val promedio by remember(criticas) {
+                                        derivedStateOf { criticas.map { it.puntuacion }.average().toInt() }
+                                    }
                                     Row {
                                         for (i in 1..5) {
                                             Text(
@@ -183,7 +188,7 @@ fun LibroDetallePantalla(
                             )
                         }
                     } else {
-                        items(criticas, key = { it.usuario + it.texto.hashCode().toString() }) { critica ->
+                        items(criticas, key = { it.id }) { critica ->
                             CriticaItem(critica)
                         }
                     }

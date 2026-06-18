@@ -39,8 +39,8 @@ open class PerfilFirebaseRepositorio @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-    open suspend fun guardarPerfil(perfil: PerfilEntity) {
-        try {
+    open suspend fun guardarPerfil(perfil: PerfilEntity): Result<Unit> {
+        return try {
             withContext(Dispatchers.IO) {
                 Tasks.await(
                     perfilDoc(perfil.userId).set(
@@ -54,11 +54,15 @@ open class PerfilFirebaseRepositorio @Inject constructor(
                     )
                 )
             }
-        } catch (_: Exception) { }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
+            Result.failure(e)
+        }
     }
 
-    open suspend fun inicializarSiNoExiste(userId: String, nombre: String, email: String) {
-        try {
+    open suspend fun inicializarSiNoExiste(userId: String, nombre: String, email: String): Result<Unit> {
+        return try {
             withContext(Dispatchers.IO) {
                 val doc = Tasks.await(perfilDoc(userId).get())
                 if (!doc.exists()) {
@@ -75,6 +79,10 @@ open class PerfilFirebaseRepositorio @Inject constructor(
                     )
                 }
             }
-        } catch (_: Exception) { }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
+            Result.failure(e)
+        }
     }
 }

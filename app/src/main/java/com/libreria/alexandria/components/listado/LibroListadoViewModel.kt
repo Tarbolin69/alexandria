@@ -79,24 +79,24 @@ class LibrosViewModel @Inject constructor(
         if (esUltimaPagina) return
         val estadoActual = _uiState.value
         if (estadoActual is LibroEstadoUI.Completado && estadoActual.isLoadingMore) return
-        paginaActual++
-        ejecutarBusqueda()
+        ejecutarBusqueda(esSiguientePagina = true)
     }
 
-    private fun ejecutarBusqueda() {
+    private fun ejecutarBusqueda(esSiguientePagina: Boolean = false) {
         viewModelScope.launch {
-            val esCargaInicial = paginaActual == 1
-            if (esCargaInicial) {
-                _uiState.value = LibroEstadoUI.Cargando
-            } else {
+            if (esSiguientePagina) {
                 val estadoActual = _uiState.value
                 if (estadoActual is LibroEstadoUI.Completado) {
                     _uiState.value = estadoActual.copy(isLoadingMore = true)
                 }
+                paginaActual++
+            }
+            val esCargaInicial = paginaActual == 1
+            if (esCargaInicial && !esSiguientePagina) {
+                _uiState.value = LibroEstadoUI.Cargando
             }
             val resultado = when (val modo = modoActual) {
                 is ModoBusqueda.Texto -> repository.buscarLibros(modo.query, paginaActual)
-                // A diferencia de Search API, Subject API usa offset en vez de page
                 is ModoBusqueda.Genero -> repository.buscarPorGenero(modo.subject, (paginaActual - 1) * 20)
                 null -> return@launch
             }

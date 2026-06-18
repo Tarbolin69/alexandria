@@ -22,6 +22,7 @@ data class ObraDto(
     @Json(name = "first_publish_year") val pubFecha: Int?,
 )
 
+@JsonClass(generateAdapter = true)
 data class AutorDto(
     @Json(name = "name") val nombre: String,
 )

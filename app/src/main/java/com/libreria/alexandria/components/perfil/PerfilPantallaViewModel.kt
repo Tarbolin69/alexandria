@@ -8,6 +8,7 @@ import com.libreria.alexandria.data.PerfilRepositorio
 import com.libreria.alexandria.data.PerfilUsuarioInfo
 import com.libreria.alexandria.data.local.PerfilEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -63,6 +64,8 @@ class PerfilPantallaViewModel @Inject constructor(
                         perfilRepositorio.guardarPerfil(perfil)
                     }
                 }
+            } catch (ce: CancellationException) {
+                throw ce
             } catch (_: Exception) {
                 perfilRepositorio.obtenerPerfil(userId).collect { perfil ->
                     if (perfil != null) {
