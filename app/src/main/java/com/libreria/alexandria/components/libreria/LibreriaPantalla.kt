@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +43,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.libreria.alexandria.R
+import com.libreria.alexandria.ui.MarkdownText
 import com.libreria.alexandria.data.local.LibroGuardadoEntity
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
@@ -88,7 +90,7 @@ fun LibreriaPantalla(
             )
             Icon(
                 imageVector = Icons.Default.SmartToy,
-                contentDescription = "Recomendaciones AI",
+                contentDescription = "Bibliotecario IA",
                 modifier = Modifier
                     .size(32.dp)
                     .clickable { onRobotClick() },
@@ -113,7 +115,7 @@ fun LibreriaPantalla(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No hay libros guardados",
+                            text = "¡No tenes ningún libro guardado aun!",
                             style = MaterialTheme.typography.bodyLarge,
                         )
                     }
@@ -146,7 +148,7 @@ private fun AiDialogContent(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxHeight()
             .padding(horizontal = 16.dp)
             .padding(bottom = 32.dp)
     ) {
@@ -163,7 +165,7 @@ private fun AiDialogContent(
                 )
             }
             Text(
-                text = "Recomendaciones AI",
+                text = "Bibliotecario IA",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -198,7 +200,7 @@ private fun AiDialogContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -216,14 +218,18 @@ private fun AiDialogContent(
                 LaunchedEffect(aiDialogState.texto) {
                     scrollState.scrollTo(0)
                 }
-                Text(
-                    text = aiDialogState.texto,
-                    style = MaterialTheme.typography.bodyMedium,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .verticalScroll(scrollState)
-                        .height(400.dp)
-                )
+                        .weight(1f)
+                ) {
+                    MarkdownText(
+                        content = aiDialogState.texto,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState)
+                    )
+                }
             }
             is AiDialogState.Error -> {
                 Text(
