@@ -115,6 +115,19 @@ fun LibroDetallePantalla(
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                if (criticas.isNotEmpty()) {
+                                    val promedio = criticas.map { it.puntuacion }.average().toInt()
+                                    Row {
+                                        for (i in 1..5) {
+                                            Text(
+                                                text = if (i <= promedio) "★" else "☆",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.primary,
+                                            )
+                                        }
+                                    }
+                                }
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Button(
                                     onClick = onCalificar,
