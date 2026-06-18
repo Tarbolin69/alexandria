@@ -3,8 +3,11 @@ package com.libreria.alexandria.components.detalle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.libreria.alexandria.data.AuthRepositorio
 import com.libreria.alexandria.data.LibroGuardadoRepositorio
 import com.libreria.alexandria.data.LibroRepositorio
+import com.libreria.alexandria.data.Review
+import com.libreria.alexandria.data.ReviewRepositorio
 import com.libreria.alexandria.data.local.LibroGuardadoEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +34,8 @@ sealed interface LibroDetalleUiState {
 class LibroDetalleViewModel @Inject constructor(
     private val repositorio: LibroRepositorio,
     private val libroGuardadoRepositorio: LibroGuardadoRepositorio,
+    private val reviewRepositorio: ReviewRepositorio,
+    private val authRepositorio: AuthRepositorio,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -46,15 +51,41 @@ class LibroDetalleViewModel @Inject constructor(
     )
     val uiState: StateFlow<LibroDetalleUiState> = _uiState.asStateFlow()
 
+    private val _criticas = MutableStateFlow<List<Review>>(emptyList())
+    val criticas: StateFlow<List<Review>> = _criticas.asStateFlow()
+
+    private val _yaCalificado = MutableStateFlow(false)
+    val yaCalificado: StateFlow<Boolean> = _yaCalificado.asStateFlow()
+
     init {
         observarMarcador()
+        observarCriticas()
+        observarYaCalificado()
         cargarDetalle()
+    }
+
+    private fun observarYaCalificado() {
+        val userId = authRepositorio.obtenerUsuarioId()
+        if (userId.isEmpty()) return
+        viewModelScope.launch {
+            reviewRepositorio.yaCalificado(libroId, userId).collect { calificado ->
+                _yaCalificado.value = calificado
+            }
+        }
     }
 
     private fun observarMarcador() {
         viewModelScope.launch {
             libroGuardadoRepositorio.esMarcado(libroId).collect { entidad ->
                 _esMarcado.value = entidad != null
+            }
+        }
+    }
+
+    private fun observarCriticas() {
+        viewModelScope.launch {
+            reviewRepositorio.obtenerReviews(libroId).collect { reviews ->
+                _criticas.value = reviews
             }
         }
     }

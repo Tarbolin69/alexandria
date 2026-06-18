@@ -34,8 +34,8 @@ import com.libreria.alexandria.components.login.LoginPantalla
 import com.libreria.alexandria.components.login.LoginViewModel
 import com.libreria.alexandria.components.perfil.PerfilPantalla
 import com.libreria.alexandria.components.perfil.PerfilPantallaViewModel
-import com.libreria.alexandria.components.resena.ResenaPantalla
-import com.libreria.alexandria.components.resena.ResenaViewModel
+import com.libreria.alexandria.components.critica.CriticaPantalla
+import com.libreria.alexandria.components.critica.CriticaViewModel
 import com.libreria.alexandria.components.splash.SplashPantalla
 import com.libreria.alexandria.components.splash.SplashViewModel
 import com.libreria.alexandria.ui.theme.AlexandriaTheme
@@ -148,9 +148,13 @@ fun AlexandriaNavHost(
             val detalleViewModel: LibroDetalleViewModel = hiltViewModel()
             val estado by detalleViewModel.uiState.collectAsStateWithLifecycle()
             val esMarcado by detalleViewModel.esMarcado.collectAsStateWithLifecycle()
+            val criticas by detalleViewModel.criticas.collectAsStateWithLifecycle()
+            val yaCalificado by detalleViewModel.yaCalificado.collectAsStateWithLifecycle()
             LibroDetallePantalla(
                 estado = estado,
                 esMarcado = esMarcado,
+                criticas = criticas,
+                yaCalificado = yaCalificado,
                 onRegresar = { navController.popBackStack() },
                 onAlternarMarcador = { detalleViewModel.alternarMarcador() },
                 onCalificar = {
@@ -176,11 +180,14 @@ fun AlexandriaNavHost(
                 }
             )
         ) {
-            val resenaViewModel: ResenaViewModel = hiltViewModel()
-            val resenaEstado by resenaViewModel.uiState.collectAsStateWithLifecycle()
-            ResenaPantalla(
-                uiState = resenaEstado,
+            val criticaViewModel: CriticaViewModel = hiltViewModel()
+            val criticaEstado by criticaViewModel.uiState.collectAsStateWithLifecycle()
+            CriticaPantalla(
+                uiState = criticaEstado,
                 onRegresar = { navController.popBackStack() },
+                onPublicar = { puntuacion, texto ->
+                    criticaViewModel.publicar(puntuacion, texto)
+                },
             )
         }
         composable(Screen.BookLibrary.route) {

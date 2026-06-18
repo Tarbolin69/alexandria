@@ -1,4 +1,4 @@
-package com.libreria.alexandria.components.resena
+package com.libreria.alexandria.components.critica
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +24,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,13 +46,20 @@ import com.libreria.alexandria.R
 
 @Composable
 @OptIn(ExperimentalGlideComposeApi::class)
-fun ResenaPantalla(
-    uiState: ResenaUiState,
+fun CriticaPantalla(
+    uiState: CriticaUiState,
     onRegresar: () -> Unit,
+    onPublicar: (puntuacion: Int, texto: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    LaunchedEffect(uiState) {
+        if (uiState is CriticaUiState.Publicado) {
+            onRegresar()
+        }
+    }
+
     when (uiState) {
-        is ResenaUiState.Cargando -> {
+        is CriticaUiState.Cargando -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -59,7 +67,7 @@ fun ResenaPantalla(
                 CircularProgressIndicator()
             }
         }
-        is ResenaUiState.Error -> {
+        is CriticaUiState.Error -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -71,29 +79,46 @@ fun ResenaPantalla(
                 )
             }
         }
-        is ResenaUiState.Completado -> {
-            ResenaContenido(
-                cubiertaUrl = uiState.cubiertaUrl,
-                autor = uiState.autor,
-                pubFecha = uiState.pubFecha,
+        is CriticaUiState.Publicando,
+        is CriticaUiState.Completado -> {
+            val esPublicando = uiState is CriticaUiState.Publicando
+            val completado = uiState as? CriticaUiState.Completado
+            CriticaContenido(
+                titulo = completado?.titulo ?: "",
+                cubiertaUrl = completado?.cubiertaUrl ?: "",
+                autor = completado?.autor ?: "",
+                pubFecha = completado?.pubFecha ?: "",
+                esPublicando = esPublicando,
                 onRegresar = onRegresar,
+                onPublicar = onPublicar,
                 modifier = modifier,
             )
+        }
+        is CriticaUiState.Publicado -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
     }
 }
 
 @Composable
 @OptIn(ExperimentalGlideComposeApi::class)
-private fun ResenaContenido(
+private fun CriticaContenido(
+    titulo: String,
     cubiertaUrl: String,
     autor: String,
     pubFecha: String,
+    esPublicando: Boolean,
     onRegresar: () -> Unit,
+    onPublicar: (puntuacion: Int, texto: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var puntuacion by remember { mutableIntStateOf(0) }
-    var textoResena by remember { mutableStateOf("") }
+    var textoCritica by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
 
     val surfaceColor = MaterialTheme.colorScheme.background
@@ -136,9 +161,19 @@ private fun ResenaContenido(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
+                text = titulo,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
                 text = "$autor - $pubFecha",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -157,7 +192,7 @@ private fun ResenaContenido(
                                 else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
-                            .clickable { puntuacion = i },
+                            .clickable(enabled = !esPublicando) { puntuacion = i },
                     )
                 }
             }
@@ -165,9 +200,10 @@ private fun ResenaContenido(
             Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedTextField(
-                value = textoResena,
-                onValueChange = { textoResena = it },
-                label = { Text("Escribe tu reseña...") },
+                value = textoCritica,
+                onValueChange = { textoCritica = it },
+                label = { Text("Escribe tu crítica...") },
+                enabled = !esPublicando,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -185,6 +221,7 @@ private fun ResenaContenido(
             ) {
                 OutlinedButton(
                     onClick = onRegresar,
+                    enabled = !esPublicando,
                     modifier = Modifier.weight(1f),
                 ) {
                     Text(
@@ -193,11 +230,12 @@ private fun ResenaContenido(
                     )
                 }
                 Button(
-                    onClick = { },
+                    onClick = { onPublicar(puntuacion, textoCritica) },
+                    enabled = !esPublicando,
                     modifier = Modifier.weight(1f),
                 ) {
                     Text(
-                        text = "Publicar",
+                        text = if (esPublicando) "Publicando..." else "Publicar",
                         modifier = Modifier.padding(vertical = 8.dp),
                         style = MaterialTheme.typography.titleMedium,
                     )

@@ -37,29 +37,15 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.libreria.alexandria.R
-
-// Una clase temporaria para mostrar la funcionalidad
-// de reseñas de usuario en la pantalla de detalles.
-private data class ResenaPlaceholder(
-    val usuario: String,
-    val texto: String,
-    val puntuacion: Int,
-)
-
-// Los usuarios falsos en sí. Esto se va a borrar
-// cuando se implemente la DB de Usuarios y Reseñas.
-private val resenasPlaceholder = listOf(
-    ResenaPlaceholder("usuario01", "Una obra fascinante que atrapa desde la primera página.", 5),
-    ResenaPlaceholder("lector_ávido", "Buen libro, aunque el ritmo decae en la mitad.", 4),
-    ResenaPlaceholder("librero99", "Lo recomiendo ampliamente, muy bien escrito.", 5),
-    ResenaPlaceholder("lector_critico", "Esperaba más del desenlace, pero en general es entretenido.", 3),
-)
+import com.libreria.alexandria.data.Review
 
 @Composable
 @OptIn(ExperimentalGlideComposeApi::class)
 fun LibroDetallePantalla(
     estado: LibroDetalleUiState,
     esMarcado: Boolean,
+    criticas: List<Review>,
+    yaCalificado: Boolean,
     onRegresar: () -> Unit,
     onAlternarMarcador: () -> Unit,
     onCalificar: () -> Unit,
@@ -132,11 +118,17 @@ fun LibroDetallePantalla(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Button(
                                     onClick = onCalificar,
+                                    enabled = !yaCalificado,
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        containerColor = if (yaCalificado)
+                                            MaterialTheme.colorScheme.surfaceVariant
+                                        else
+                                            MaterialTheme.colorScheme.primary,
+                                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                     ),
                                 ) {
-                                    Text(text = "Calificar")
+                                    Text(text = if (yaCalificado) "Calificado" else "Calificar")
                                 }
                             }
                         }
@@ -164,14 +156,23 @@ fun LibroDetallePantalla(
 
                     item {
                         Text(
-                            text = "Reseñas de usuarios",
+                            text = "Críticas de usuarios",
                             style = MaterialTheme.typography.titleLarge,
                         )
                     }
 
-                    // Itera por todas las reseñas
-                    items(resenasPlaceholder, key = { it.usuario }) { resena ->
-                        ResenaItem(resena)
+                    if (criticas.isEmpty()) {
+                        item {
+                            Text(
+                                text = "No hay críticas todavía.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    } else {
+                        items(criticas, key = { it.usuario + it.texto.hashCode().toString() }) { critica ->
+                            CriticaItem(critica)
+                        }
                     }
                 }
             }
@@ -210,7 +211,7 @@ fun LibroDetallePantalla(
 }
 
 @Composable
-private fun ResenaItem(resena: ResenaPlaceholder) {
+private fun CriticaItem(critica: Review) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -223,18 +224,18 @@ private fun ResenaItem(resena: ResenaPlaceholder) {
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = resena.usuario,
+                    text = critica.usuario,
                     style = MaterialTheme.typography.titleSmall,
                 )
                 Text(
-                    text = "${"★".repeat(resena.puntuacion)}${"☆".repeat(5 - resena.puntuacion)}",
+                    text = "${"★".repeat(critica.puntuacion)}${"☆".repeat(5 - critica.puntuacion)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = resena.texto,
+                text = critica.texto,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
