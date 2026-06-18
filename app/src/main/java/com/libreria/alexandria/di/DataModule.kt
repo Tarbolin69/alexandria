@@ -26,6 +26,14 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+// Módulo para la inyección de dependencias:
+// - Moshi
+// - Retrofit
+// - Room DB
+// - DAOs
+// - Repositorios
+// - Firebase
+
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {

@@ -46,7 +46,6 @@ class LibroListadoViewModel @Inject constructor(
     private val librosCompilados = mutableListOf<Libro>()
     private var modoActual: ModoBusqueda? = null
 
-
     // Estos dos hacen básicamente lo mismo:
     // resetean la paginación, los libros
     // guardados y borran el elemento de

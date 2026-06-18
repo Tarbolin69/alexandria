@@ -11,6 +11,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// El perfil del usuario en la nube (Firestore)
+// para tener sincronizado entre dispositivos.
+
 @Singleton
 open class PerfilFirebaseRepositorio @Inject constructor(
     private val firestore: FirebaseFirestore

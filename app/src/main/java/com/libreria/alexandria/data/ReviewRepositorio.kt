@@ -12,6 +12,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Las reviews tambien se guardan en Firestore
+
 @Singleton
 open class ReviewRepositorio @Inject constructor(
     private val firestore: FirebaseFirestore

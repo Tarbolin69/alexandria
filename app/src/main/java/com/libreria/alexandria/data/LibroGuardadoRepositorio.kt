@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// CRUD para libros guardados
+
 @Singleton
 open class LibroGuardadoRepositorio @Inject constructor(
     private val dao: LibroGuardadoDao

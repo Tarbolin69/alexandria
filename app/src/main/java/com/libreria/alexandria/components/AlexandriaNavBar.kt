@@ -16,6 +16,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
+// La barrita de navegación inferior que tienen
+// todas las apps de este estilo.
+
 sealed class NavBarItem(
     val route: String,
     val label: String,
@@ -29,7 +32,7 @@ sealed class NavBarItem(
 
     object Libreria : NavBarItem(
         route = Screen.BookLibrary.route,
-        label = "Libreria",
+        label = "Librería",
         icon = Icons.Default.Book
     )
 

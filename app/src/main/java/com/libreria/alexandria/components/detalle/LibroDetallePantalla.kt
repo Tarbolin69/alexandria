@@ -134,6 +134,8 @@ fun LibroDetallePantalla(
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(8.dp))
+                                // No te deja volver a calificar el mismo libro
+                                // dos veces.
                                 Button(
                                     onClick = onCalificar,
                                     enabled = !yaCalificado,

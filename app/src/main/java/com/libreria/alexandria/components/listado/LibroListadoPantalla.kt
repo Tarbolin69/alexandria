@@ -217,6 +217,7 @@ private fun LibroListadoItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             GlideImage(
+                // Los placeholder cuan están cargando las imágenes
                 model = libro.cubiertaId,
                 contentDescription = libro.titulo,
                 modifier = Modifier.size(64.dp, 96.dp),

@@ -84,7 +84,7 @@ fun LibreriaPantalla(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Libreria",
+                text = "Librería",
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.primary,
             )

@@ -21,6 +21,8 @@ class SplashViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<SplashUiState>(SplashUiState.Cargando)
     val uiState: StateFlow<SplashUiState> = _uiState.asStateFlow()
 
+    // Lleva directo al listado de libros si es usuario ya esta
+    // registrado, de lo contrario, a la pantalla de login.
     init {
         val ruta = if (authRepositorio.isUsuarioAutenticado()) {
             Screen.BookList.route

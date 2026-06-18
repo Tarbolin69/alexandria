@@ -64,6 +64,7 @@ fun AlexandriaMainScreen() {
     val bottomNavRoutes = remember { bottomNavItems.map { it.route }.toSet() }
     val showBottomBar = currentRoute in bottomNavRoutes
 
+    // La barra de navegación no se muestra en la pantalla de inicio de sesión.
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {

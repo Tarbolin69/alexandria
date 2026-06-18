@@ -8,6 +8,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import androidx.core.content.edit
 
+// La API key encriptada se almacena en SharedPreferences
+// ¡Para que nadie la robe!
+
 @Singleton
 class DeepseekApiKeyStorage @Inject constructor(
     @ApplicationContext private val context: Context

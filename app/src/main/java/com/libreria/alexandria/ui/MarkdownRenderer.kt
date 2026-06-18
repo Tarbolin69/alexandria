@@ -17,6 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 
+// Un renderizador Markdown para la respuesta
+// de DeepSeek AI
+
 @Composable
 fun MarkdownText(
     content: String,
