@@ -16,7 +16,13 @@ sealed class Screen(val route: String) {
             return "book_detail_screen/$bookId/${android.net.Uri.encode(autor)}?pubFecha=$fechaEncoded"
         }
     }
-    object BookReview: Screen("book_review_screen")
+    object BookReview: Screen("book_review_screen") {
+        const val ROUTE_PATTERN = "book_review_screen/{bookId}/{autor}?pubFecha={pubFecha}"
+        fun createRoute(bookId: String, autor: String, pubFecha: String = ""): String {
+            val fechaEncoded = android.net.Uri.encode(pubFecha)
+            return "book_review_screen/$bookId/${android.net.Uri.encode(autor)}?pubFecha=$fechaEncoded"
+        }
+    }
     object BookLibrary: Screen("book_library_screen")
     object UsuarioPerfil: Screen("usuario_perfil_screen")
 }
