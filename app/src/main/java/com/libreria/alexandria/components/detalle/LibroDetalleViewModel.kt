@@ -66,7 +66,10 @@ class LibroDetalleViewModel @Inject constructor(
 
     private fun observarYaCalificado() {
         val userId = authRepositorio.obtenerUsuarioId()
-        if (userId.isEmpty()) return
+        if (userId.isEmpty()) {
+            _yaCalificado.value = false
+            return
+        }
         viewModelScope.launch {
             reviewRepositorio.yaCalificado(libroId, userId).collect { calificado ->
                 _yaCalificado.value = calificado
@@ -140,7 +143,7 @@ class LibroDetalleViewModel @Inject constructor(
                         cubiertaUrl = info.cubiertaId,
                         pubFecha = fecha,
                         descripcion = info.descripcion,
-                        esMarcado = _esMarcado.value,
+                        esMarcado = false,
                     )
                 }
                 .onFailure { e ->

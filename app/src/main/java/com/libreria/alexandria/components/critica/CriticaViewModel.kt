@@ -8,6 +8,7 @@ import com.libreria.alexandria.data.LibroGuardadoRepositorio
 import com.libreria.alexandria.data.LibroRepositorio
 import com.libreria.alexandria.data.ReviewRepositorio
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -63,6 +64,8 @@ class CriticaViewModel @Inject constructor(
                     texto = texto,
                 )
                 _uiState.value = CriticaUiState.Publicado
+            } catch (ce: CancellationException) {
+                throw ce
             } catch (e: Exception) {
                 _uiState.value = CriticaUiState.Error(
                     mensaje = e.message ?: "Error al publicar la crítica."
