@@ -7,10 +7,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PerfilRepositorio @Inject constructor(
+open class PerfilRepositorio @Inject constructor(
     private val perfilDao: PerfilDao
 ) {
-    fun obtenerPerfil(userId: String): Flow<PerfilEntity?> = perfilDao.obtenerPerfil(userId)
+    open fun obtenerPerfil(userId: String): Flow<PerfilEntity?> = perfilDao.obtenerPerfil(userId)
 
-    suspend fun guardarPerfil(perfil: PerfilEntity) = perfilDao.guardarPerfil(perfil)
+    open suspend fun guardarPerfil(perfil: PerfilEntity) = perfilDao.guardarPerfil(perfil)
 }

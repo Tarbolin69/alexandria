@@ -1,0 +1,11 @@
+{
+  "works": [
+    {
+      "key": "/works/OL27448W",
+      "title": "The Lord of the Rings",
+      "authors": [{"name": "J.R.R. Tolkien"}],
+      "cover_id": 1467391,
+      "first_publish_year": 1954
+    }
+  ]
+}

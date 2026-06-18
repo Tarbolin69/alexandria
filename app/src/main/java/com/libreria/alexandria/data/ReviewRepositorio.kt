@@ -12,14 +12,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ReviewRepositorio @Inject constructor(
+open class ReviewRepositorio @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
     private fun coleccionCriticas() = firestore.collection("criticas")
 
     private fun documentoId(bookId: String, userId: String) = "${bookId}_$userId"
 
-    suspend fun publicarReview(
+    open suspend fun publicarReview(
         bookId: String,
         userId: String,
         usuario: String,
@@ -42,7 +42,7 @@ class ReviewRepositorio @Inject constructor(
         }
     }
 
-    fun yaCalificado(bookId: String, userId: String): Flow<Boolean> = callbackFlow {
+    open fun yaCalificado(bookId: String, userId: String): Flow<Boolean> = callbackFlow {
         var listener: ListenerRegistration? = null
         try {
             listener = coleccionCriticas()
@@ -56,7 +56,7 @@ class ReviewRepositorio @Inject constructor(
         awaitClose { listener?.remove() }
     }
 
-    fun obtenerReviews(bookId: String): Flow<List<Review>> = callbackFlow {
+    open fun obtenerReviews(bookId: String): Flow<List<Review>> = callbackFlow {
         var listener: ListenerRegistration? = null
         try {
             listener = coleccionCriticas()

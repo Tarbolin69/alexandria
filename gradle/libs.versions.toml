@@ -4,6 +4,9 @@ glideCompose = "1.0.0-beta09"
 converterMoshi = "3.0.0"
 junit = "4.13.2"
 kotlinxCoroutinesAndroid = "1.11.0"
+kotlinxCoroutinesTest = "1.11.0"
+coreTesting = "2.2.0"
+mockk = "1.13.14"
 kotlin = "2.3.21"
 lifecycleViewmodelKtx = "2.10.0"
 lifecycleLivedataKtx = "2.10.0"
@@ -57,6 +60,9 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "coreTesting" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }

@@ -1,0 +1,18 @@
+{
+  "docs": [
+    {
+      "title": "The Lord of the Rings",
+      "author_name": ["J.R.R. Tolkien"],
+      "first_publish_year": 1954,
+      "cover_i": 1467391,
+      "key": "/works/OL27448W"
+    },
+    {
+      "title": "The Hobbit",
+      "author_name": ["J.R.R. Tolkien"],
+      "first_publish_year": 1937,
+      "cover_i": 8406786,
+      "key": "/works/OL262758W"
+    }
+  ]
+}
