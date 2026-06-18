@@ -162,7 +162,7 @@ fun PerfilPantalla(
 
         if (estaEditando) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                Button(
+                OutlinedButton(
                     onClick = onCancelarEdicion,
                     modifier = Modifier.weight(1f)
                 ) {
@@ -188,7 +188,7 @@ fun PerfilPantalla(
                 onClick = onCerrarSesion,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Cerrar sesion")
+                Text("Cerrar sesión")
             }
         }
     }
